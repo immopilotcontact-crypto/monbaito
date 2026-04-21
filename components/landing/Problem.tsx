@@ -20,8 +20,8 @@ export function Problem() {
             className="text-4xl md:text-6xl lg:text-7xl font-black uppercase tracking-tighter leading-[0.92] mb-10 text-neutral-900"
             style={{ fontFamily: "var(--font-sans)" }}
           >
-            Trouver un job étudiant,
-            c&apos;est pas censé être si dur.
+            Par un étudiant,
+            pour les étudiants.
           </h2>
           <p
             className="text-lg text-neutral-600 leading-relaxed max-w-xl"
