@@ -58,7 +58,7 @@ export default function BillingPage() {
       {tier === "pro" ? (
         <div className="bg-[var(--accent)]/10 border border-[var(--accent)]/30 rounded-2xl p-6 text-center">
           <CheckCircle2 size={32} className="text-[var(--accent)] mx-auto mb-3" />
-          <h2 className="font-bold text-white text-lg">Tu es sur MonBaito Pro 🎉</h2>
+          <h2 className="font-bold text-white text-lg">Tu es sur MonBaito Pro</h2>
           <p className="text-[var(--muted-foreground)] text-sm mt-2">
             Toutes les fonctionnalités sont débloquées.
           </p>

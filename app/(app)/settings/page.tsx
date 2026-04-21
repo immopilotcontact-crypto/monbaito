@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase-browser";
 import { toast } from "sonner";
 import Link from "next/link";
-import { CreditCard } from "lucide-react";
+import { CreditCard, Check } from "lucide-react";
 import type { ProfileRow } from "@/types/database";
 
 const CONTRACT_TYPES = [
@@ -96,7 +96,7 @@ export default function SettingsPage() {
                   active ? "border-[var(--accent)] bg-[var(--accent)]/10 text-white" : "border-white/10 text-[var(--muted-foreground)]"
                 }`}>
                 <span className={`w-4 h-4 rounded border flex-shrink-0 flex items-center justify-center ${active ? "border-[var(--accent)] bg-[var(--accent)]" : "border-white/30"}`}>
-                  {active && <span className="text-[10px] text-white">✓</span>}
+                  {active && <Check size={10} className="text-white" />}
                 </span>
                 {c.label}
               </button>
@@ -117,7 +117,7 @@ export default function SettingsPage() {
                   active ? "border-[var(--accent)] bg-[var(--accent)]/10 text-white" : "border-white/10 text-[var(--muted-foreground)]"
                 }`}>
                 <span className={`w-4 h-4 rounded border flex-shrink-0 flex items-center justify-center ${active ? "border-[var(--accent)] bg-[var(--accent)]" : "border-white/30"}`}>
-                  {active && <span className="text-[10px] text-white">✓</span>}
+                  {active && <Check size={10} className="text-white" />}
                 </span>
                 {f.label}
               </button>

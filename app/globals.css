@@ -29,8 +29,9 @@
   --ring: 0 72% 42%;
   --radius: 0.75rem;
 
-  --font-sans: var(--font-inter);
-  --font-serif: var(--font-fraunces);
+  --font-sans: "Helvetica Neue", Helvetica, var(--font-inter), Arial, sans-serif;
+  --font-serif: "Helvetica Neue", Helvetica, var(--font-inter), Arial, sans-serif;
+  --font-label: "Helvetica Neue", Helvetica, var(--font-space-grotesk), Arial, sans-serif;
 
   color-scheme: light;
 }
@@ -58,6 +59,8 @@
   --danger: 0 80% 55%;
   --input: 240 6% 18%;
   --ring: 354 80% 57%;
+  --font-sans: "Helvetica Neue", Helvetica, var(--font-inter), Arial, sans-serif;
+  --font-label: "Helvetica Neue", Helvetica, var(--font-space-grotesk), Arial, sans-serif;
 
   color-scheme: dark;
 }
@@ -85,10 +88,10 @@
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
 
-  --font-sans: var(--font-inter);
-  --font-serif: var(--font-fraunces);
-  --font-label: var(--font-space-grotesk, var(--font-inter));
-  --font-heading: var(--font-inter);
+  --font-sans: "Helvetica Neue", Helvetica, var(--font-inter), Arial, sans-serif;
+  --font-serif: "Helvetica Neue", Helvetica, var(--font-inter), Arial, sans-serif;
+  --font-label: "Helvetica Neue", Helvetica, var(--font-space-grotesk), Arial, sans-serif;
+  --font-heading: "Helvetica Neue", Helvetica, var(--font-inter), Arial, sans-serif;
 
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);

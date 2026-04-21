@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase-server";
 import { TrustBadge } from "@/components/app/TrustBadge";
 import { LetterEditor } from "@/components/app/LetterEditor";
-import { ArrowLeft, ExternalLink, MapPin, Euro, Clock, Building2 } from "lucide-react";
+import { ArrowLeft, ExternalLink, MapPin, Euro, Clock, Building2, CheckCircle, AlertTriangle, XCircle, Minus } from "lucide-react";
 import Link from "next/link";
 import type { TrustReason } from "@/types/database";
 
@@ -13,12 +13,12 @@ const SEVERITY_STYLES: Record<string, string> = {
   critical: "text-red-400 bg-red-400/10",
 };
 
-const SEVERITY_ICONS: Record<string, string> = {
-  positive: "✓",
-  neutral: "·",
-  warning: "⚠",
-  critical: "✕",
-};
+function SeverityIcon({ severity }: { severity: string }) {
+  if (severity === "positive") return <CheckCircle size={14} className="shrink-0" />;
+  if (severity === "warning") return <AlertTriangle size={14} className="shrink-0" />;
+  if (severity === "critical") return <XCircle size={14} className="shrink-0" />;
+  return <Minus size={14} className="shrink-0" />;
+}
 
 export default async function OfferPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -111,8 +111,8 @@ export default async function OfferPage({ params }: { params: Promise<{ id: stri
           <ul className="space-y-2.5">
             {trustReasons.map((r, i) => (
               <li key={i} className="flex items-start gap-3">
-                <span className={`shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${SEVERITY_STYLES[r.severity]}`}>
-                  {SEVERITY_ICONS[r.severity]}
+                <span className={`shrink-0 w-5 h-5 rounded-full flex items-center justify-center ${SEVERITY_STYLES[r.severity]}`}>
+                  <SeverityIcon severity={r.severity} />
                 </span>
                 <p className="text-sm text-[var(--muted-foreground)] leading-relaxed">{r.message}</p>
               </li>
@@ -135,7 +135,8 @@ export default async function OfferPage({ params }: { params: Promise<{ id: stri
           </div>
           {Number(companyStats.scam_reports) > 0 && (
             <p className="mt-3 text-xs text-red-400 flex items-center gap-1.5">
-              ⚠ {companyStats.scam_reports} signalement{Number(companyStats.scam_reports) > 1 ? "s" : ""} d&apos;arnaque pour cette entreprise
+              <AlertTriangle size={13} className="shrink-0" />
+              {companyStats.scam_reports} signalement{Number(companyStats.scam_reports) > 1 ? "s" : ""} d&apos;arnaque pour cette entreprise
             </p>
           )}
         </section>

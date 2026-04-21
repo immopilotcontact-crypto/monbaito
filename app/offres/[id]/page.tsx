@@ -5,7 +5,7 @@ import { getOffreById } from "@/lib/offres";
 import { PostulerButton } from "@/components/offres/PostulerButton";
 import { TrustBadge } from "@/components/offres/TrustBadge";
 import { Footer } from "@/components/shared/Footer";
-import { ArrowLeft, MapPin, Clock, Banknote, Building2, CalendarDays } from "lucide-react";
+import { ArrowLeft, MapPin, Clock, Banknote, Building2, CalendarDays, CheckCircle, AlertTriangle, XCircle, Minus, BadgeCheck } from "lucide-react";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -216,13 +216,15 @@ export default async function OffrePage({ params }: Props) {
                           className="text-xs text-muted-foreground flex items-start gap-1.5"
                           style={{ fontFamily: "var(--font-label)" }}
                         >
-                          <span className={
-                            r.severity === "positive" ? "text-green-600" :
-                            r.severity === "warning" ? "text-yellow-600" :
-                            r.severity === "critical" ? "text-destructive" : "text-muted-foreground"
-                          }>
-                            {r.severity === "positive" ? "✓" : r.severity === "warning" ? "⚠" : r.severity === "critical" ? "✗" : "•"}
-                          </span>
+                          {r.severity === "positive" ? (
+                            <CheckCircle size={12} className="text-green-600 shrink-0 mt-0.5" />
+                          ) : r.severity === "warning" ? (
+                            <AlertTriangle size={12} className="text-yellow-600 shrink-0 mt-0.5" />
+                          ) : r.severity === "critical" ? (
+                            <XCircle size={12} className="text-destructive shrink-0 mt-0.5" />
+                          ) : (
+                            <Minus size={12} className="text-muted-foreground shrink-0 mt-0.5" />
+                          )}
                           {r.message}
                         </li>
                       ))}
@@ -251,10 +253,11 @@ export default async function OffrePage({ params }: Props) {
                   </div>
                   {offre.company_verified && (
                     <p
-                      className="text-xs text-green-600 mt-1"
+                      className="inline-flex items-center gap-1 text-xs text-green-600 mt-1"
                       style={{ fontFamily: "var(--font-label)" }}
                     >
-                      ✓ Entreprise vérifiée SIRENE
+                      <BadgeCheck size={12} />
+                      Entreprise vérifiée SIRENE
                     </p>
                   )}
                 </div>

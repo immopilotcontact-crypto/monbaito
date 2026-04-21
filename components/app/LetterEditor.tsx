@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Copy, ExternalLink, CheckCircle2, Loader2 } from "lucide-react";
+import { Copy, ExternalLink, CheckCircle2, Loader2, Sparkles, CheckCircle, Target } from "lucide-react";
 import { toast } from "sonner";
 
 interface LetterEditorProps {
@@ -74,7 +74,8 @@ export function LetterEditor({ offerId, offerUrl, companyName, offerTitle, match
               Génération de ta lettre par Claude…
             </>
           ) : (
-            "✨ Postuler avec MonBaito — Générer ma lettre"
+            <><Sparkles size={16} className="mr-2" />Postuler avec MonBaito — Générer ma lettre</>
+
           )}
         </button>
       ) : (
@@ -109,7 +110,7 @@ export function LetterEditor({ offerId, offerUrl, companyName, offerTitle, match
           </div>
           {applied && (
             <p className="text-center text-sm text-emerald-400 font-medium">
-              ✅ Candidature enregistrée pour {companyName}
+              <CheckCircle size={14} className="inline mr-1" />Candidature enregistrée pour {companyName}
             </p>
           )}
         </div>
@@ -119,7 +120,7 @@ export function LetterEditor({ offerId, offerUrl, companyName, offerTitle, match
       {showAppliedPopup && !applied && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4">
           <div className="bg-[#1a1a2e] border border-white/10 rounded-2xl p-6 max-w-sm w-full shadow-2xl">
-            <h3 className="font-semibold text-white text-lg mb-2">Tu as postulé ? 🎯</h3>
+            <h3 className="font-semibold text-white text-lg mb-2 flex items-center gap-2"><Target size={18} />Tu as postulé ?</h3>
             <p className="text-[var(--muted-foreground)] text-sm mb-5">
               Pour {offerTitle} chez {companyName ?? "cette entreprise"}
             </p>

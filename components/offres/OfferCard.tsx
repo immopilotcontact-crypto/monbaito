@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { MapPin, Clock, Banknote } from "lucide-react";
 import type { EnrichedOfferWithRaw } from "@/types/database";
 import { TrustBadge } from "./TrustBadge";
 import { PostulerButton } from "./PostulerButton";
@@ -70,18 +71,21 @@ export function OfferCard({ offer }: OfferCardProps) {
       {/* Pills */}
       <div className="flex flex-wrap gap-2">
         {raw.location_city && (
-          <span className="text-xs bg-muted rounded-full px-2.5 py-1 text-muted-foreground">
-            📍 {raw.location_city}
+          <span className="inline-flex items-center gap-1 text-xs bg-muted rounded-full px-2.5 py-1 text-muted-foreground">
+            <MapPin size={11} />
+            {raw.location_city}
           </span>
         )}
         {contractLabel && (
-          <span className="text-xs bg-muted rounded-full px-2.5 py-1 text-muted-foreground">
-            ⏱ {contractLabel}
+          <span className="inline-flex items-center gap-1 text-xs bg-muted rounded-full px-2.5 py-1 text-muted-foreground">
+            <Clock size={11} />
+            {contractLabel}
           </span>
         )}
         {salary && (
-          <span className="text-xs bg-muted rounded-full px-2.5 py-1 text-muted-foreground">
-            💶 {salary}
+          <span className="inline-flex items-center gap-1 text-xs bg-muted rounded-full px-2.5 py-1 text-muted-foreground">
+            <Banknote size={11} />
+            {salary}
           </span>
         )}
       </div>

@@ -2,7 +2,12 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { SlidersHorizontal, X, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  SlidersHorizontal, X, ChevronLeft, ChevronRight,
+  UtensilsCrossed, ShoppingBag, Baby, BookOpen, BedDouble,
+  Bike, Headphones, Package, Briefcase, Sparkles,
+  type LucideIcon,
+} from "lucide-react";
 import Link from "next/link";
 import type { EnrichedOfferWithRaw } from "@/types/database";
 import { matchesSecteur, SECTEURS } from "@/lib/secteurs";
@@ -12,18 +17,24 @@ import { FilterPanel } from "./FilterPanel";
 import { OfferList } from "./OfferList";
 import { EmptyState } from "./EmptyState";
 
-const SECTEUR_ICONS: Record<string, string> = {
-  restauration: "🍽️",
-  vente: "🛍️",
-  babysitting: "👶",
-  enseignement: "📚",
-  hotellerie: "🏨",
-  livraison: "🚴",
-  "service-client": "🎧",
-  logistique: "📦",
-  administratif: "💼",
-  autre: "✨",
+const SECTEUR_ICONS: Record<string, LucideIcon> = {
+  restauration: UtensilsCrossed,
+  vente: ShoppingBag,
+  babysitting: Baby,
+  enseignement: BookOpen,
+  hotellerie: BedDouble,
+  livraison: Bike,
+  "service-client": Headphones,
+  logistique: Package,
+  administratif: Briefcase,
+  autre: Sparkles,
 };
+
+function SecteurIcon({ slug }: { slug: string }) {
+  const Icon = SECTEUR_ICONS[slug];
+  if (!Icon) return null;
+  return <Icon size={13} />;
+}
 
 interface OffresPageClientProps {
   initialOffres: EnrichedOfferWithRaw[];
@@ -313,7 +324,7 @@ export function OffresPageClient({
                   : "bg-card border-border/50 text-muted-foreground hover:text-foreground hover:border-border"
               }`}
             >
-              <span>{SECTEUR_ICONS[s.slug]}</span>
+              {SECTEUR_ICONS[s.slug] && <SecteurIcon slug={s.slug} />}
               {s.label}
             </button>
           );

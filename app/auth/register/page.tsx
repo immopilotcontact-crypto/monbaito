@@ -34,17 +34,26 @@ export default function RegisterPage() {
       return;
     }
     setLoading(true);
-    const { error } = await supabase.auth.signUp({ email, password });
-    setLoading(false);
-    if (error) {
-      if (error.message.includes("already registered")) {
+    const { error: signUpError } = await supabase.auth.signUp({ email, password });
+    if (signUpError) {
+      setLoading(false);
+      if (signUpError.message.toLowerCase().includes("already registered")) {
         toast.error("Cet email est déjà utilisé. Connecte-toi.");
       } else {
         toast.error("Erreur lors de la création du compte.");
       }
       return;
     }
-    router.push("/onboarding");
+
+    // Sign in immediately so session exists regardless of email confirmation setting
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+    setLoading(false);
+    if (signInError) {
+      toast.error("Compte créé — connecte-toi pour continuer.");
+      router.push("/auth/login");
+      return;
+    }
+    router.push("/profil");
     router.refresh();
   }
 

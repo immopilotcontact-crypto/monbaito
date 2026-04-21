@@ -31,8 +31,10 @@ export interface ProfileRow {
   };
   min_hourly_rate: number;
   red_flags: string[];
+  phone: string | null;
   cv_text: string | null;
   cv_embedding: number[] | null;
+  cover_letter_template: string | null;
   tier: "free" | "pro";
   stripe_customer_id: string | null;
   stripe_subscription_id: string | null;

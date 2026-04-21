@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase-server";
 import { TrustBadge } from "@/components/app/TrustBadge";
-import { ArrowLeft, Building2, ExternalLink } from "lucide-react";
+import { ArrowLeft, Building2, ExternalLink, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 
 export default async function EntreprisePage({ params }: { params: Promise<{ siren: string }> }) {
@@ -59,7 +59,8 @@ export default async function EntreprisePage({ params }: { params: Promise<{ sir
           )}
           {Number(stats.scam_reports) > 0 && (
             <p className="mt-2 text-sm text-red-400 flex items-center gap-1.5">
-              ⚠ {stats.scam_reports} signalement{Number(stats.scam_reports) > 1 ? "s" : ""} d&apos;arnaque
+              <AlertTriangle size={13} className="shrink-0" />
+              {stats.scam_reports} signalement{Number(stats.scam_reports) > 1 ? "s" : ""} d&apos;arnaque
             </p>
           )}
         </section>

@@ -111,7 +111,7 @@ export default function DashboardPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-foreground tracking-tight">
-            Bonjour{profile?.first_name ? `, ${profile.first_name}` : ""} 👋
+            Bonjour{profile?.first_name ? `, ${profile.first_name}` : ""}
           </h1>
           <p className="text-sm text-muted-foreground mt-0.5">
             {loading ? "Chargement…" : `${filtered.length} offre${filtered.length !== 1 ? "s" : ""} sélectionnée${filtered.length !== 1 ? "s" : ""} pour toi`}

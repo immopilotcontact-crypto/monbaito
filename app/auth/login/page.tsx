@@ -42,6 +42,8 @@ function LoginForm() {
     if (error) {
       if (error.message.includes("Invalid login credentials")) {
         toast.error("Email ou mot de passe incorrect.");
+      } else if (error.message.includes("Email not confirmed")) {
+        toast.error("Email non confirmé. Vérifie ta boîte mail ou recrée un compte.");
       } else {
         toast.error("Erreur de connexion. Réessaie.");
       }
