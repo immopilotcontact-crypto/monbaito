@@ -5,9 +5,9 @@ import { OffresPageClient } from "@/components/offres/OffresPageClient";
 import { Footer } from "@/components/shared/Footer";
 
 export const metadata: Metadata = {
-  title: "Offres d'emploi étudiantes — Vérifiées sans arnaque",
+  title: "Offres d'emploi étudiantes — Vérifiées par notre IA",
   description:
-    "Trouve ton job étudiant parmi des centaines d'offres vérifiées par notre IA. Trust Score anti-arnaque, candidature en 1 clic. Restauration, vente, babysitting, livraison et plus.",
+    "Trouve ton job étudiant parmi des centaines d'offres vérifiées par notre IA. Candidature en 1 clic. Restauration, vente, babysitting, livraison et plus.",
   alternates: { canonical: "/offres" },
 };
 

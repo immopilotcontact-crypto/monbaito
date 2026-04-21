@@ -9,15 +9,15 @@ const features = [
 export function Problem() {
   return (
     <section
-      className="bg-stone-100 section-spacing px-6"
+      className="bg-stone-100 section-spacing px-5 md:px-6"
       aria-labelledby="manifesto-title"
     >
-      <div className="max-w-screen-xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12">
+      <div className="max-w-screen-xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12">
         {/* Left: large heading + body */}
         <div className="md:col-span-7">
           <h2
             id="manifesto-title"
-            className="text-4xl md:text-6xl lg:text-7xl font-black uppercase tracking-tighter leading-[0.92] mb-10 text-neutral-900"
+            className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-black uppercase tracking-tighter leading-[0.92] mb-6 md:mb-10 text-neutral-900"
             style={{ fontFamily: "var(--font-sans)" }}
           >
             Par un étudiant,

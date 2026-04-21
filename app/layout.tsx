@@ -31,16 +31,16 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: "MonBaito — L'IA qui trouve ton job étudiant et détecte les arnaques",
+    default: "MonBaito — L'IA qui trouve ton job étudiant",
     template: "%s | MonBaito",
   },
   description:
-    "MonBaito est l'agent IA qui scanne les offres d'emploi étudiantes, détecte les arnaques, et t'aide à postuler plus vite et mieux. Rejoins la beta gratuite.",
+    "MonBaito est l'agent IA qui scanne les offres d'emploi étudiantes et t'aide à postuler plus vite et mieux. Rejoins la beta gratuite.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://monbaito.fr"),
   openGraph: {
     title: "MonBaito — L'IA qui trouve ton job étudiant",
     description:
-      "Fini les arnaques et les heures perdues. MonBaito scanne les offres, vérifie les entreprises, et t'aide à postuler en un clic.",
+      "Fini les heures perdues. MonBaito scanne les offres, vérifie les entreprises, et t'aide à postuler en un clic.",
     url: "/",
     siteName: "MonBaito",
     images: [
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "MonBaito — L'IA qui trouve ton job étudiant",
     description:
-      "Fini les arnaques et les heures perdues. MonBaito scanne les offres, vérifie les entreprises, et t'aide à postuler en un clic.",
+      "Fini les heures perdues. MonBaito scanne les offres, vérifie les entreprises, et t'aide à postuler en un clic.",
     images: ["/og-image.png"],
   },
   appleWebApp: {
@@ -86,7 +86,7 @@ const jsonLd = {
       url: "https://monbaito.fr",
       logo: "https://monbaito.fr/logo.png",
       description:
-        "L'agent IA qui trouve les vraies offres d'emploi étudiantes et détecte les arnaques.",
+        "L'agent IA qui trouve les vraies offres d'emploi étudiantes.",
       founder: {
         "@type": "Person",
         name: "Morii",
@@ -97,7 +97,7 @@ const jsonLd = {
       name: "MonBaito",
       url: "https://monbaito.fr",
       description:
-        "MonBaito est l'agent IA qui scanne les offres d'emploi étudiantes, détecte les arnaques, et t'aide à postuler plus vite et mieux.",
+        "MonBaito est l'agent IA qui scanne les offres d'emploi étudiantes et t'aide à postuler plus vite et mieux.",
       inLanguage: "fr-FR",
     },
   ],

@@ -22,8 +22,8 @@ export async function generateMetadata({
   const ville = getVilleBySlug(slug);
   if (!ville) return {};
   return {
-    title: `Job étudiant ${ville.label} — Offres vérifiées sans arnaque`,
-    description: `Trouve ton job étudiant à ${ville.label} avec MonBaito. Offres vérifiées, Trust Score anti-arnaque, candidature en 1 clic. Gratuit.`,
+    title: `Job étudiant ${ville.label} — Offres vérifiées par notre IA`,
+    description: `Trouve ton job étudiant à ${ville.label} avec MonBaito. Offres vérifiées par notre IA, candidature en 1 clic. Gratuit.`,
     alternates: { canonical: `/job-etudiant/${slug}` },
   };
 }
@@ -92,10 +92,9 @@ export default async function VillePage({
         <p className="text-muted-foreground leading-relaxed mb-10 max-w-2xl">
           Tu cherches un job étudiant à {ville.label} ? MonBaito recense les offres disponibles
           dans le département {ville.departement} et aux alentours, les vérifie une par une grâce
-          à son Trust Score, et t&apos;aide à postuler en 1 clic. Fini les arnaques, fini les offres
-          bidon. Que tu cherches un job en restauration, de la garde d&apos;enfants, un soutien
-          scolaire ou un job d&apos;été, toutes les offres sont analysées et notées pour te
-          protéger.
+          à son Trust Score, et t&apos;aide à postuler en 1 clic. Que tu cherches un job en
+          restauration, de la garde d&apos;enfants, un soutien scolaire ou un job d&apos;été,
+          toutes les offres sont analysées et notées.
         </p>
 
         {/* Offres */}

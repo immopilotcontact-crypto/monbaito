@@ -43,10 +43,10 @@ export function Solution() {
   }, []);
 
   return (
-    <section className="section-spacing px-6" aria-labelledby="matching-title">
+    <section className="section-spacing px-5 md:px-6" aria-labelledby="matching-title">
       <div className="max-w-screen-xl mx-auto">
         {/* Section header */}
-        <div className="flex justify-between items-baseline mb-16 border-b border-stone-200 pb-4">
+        <div className="flex justify-between items-baseline mb-8 md:mb-16 border-b border-stone-200 pb-4">
           <h2
             id="matching-title"
             className="text-xl md:text-2xl font-black uppercase tracking-tighter text-neutral-900"
@@ -67,10 +67,10 @@ export function Solution() {
           {matchCards.map((card) => (
             <div
               key={card.number}
-              className="bg-white p-8 border border-stone-200/80 hover:border-red-700 transition-all group flex flex-col justify-between min-h-[300px] cursor-default"
+              className="bg-white p-5 md:p-8 border border-stone-200/80 hover:border-red-700 transition-all group flex flex-col justify-between min-h-[220px] md:min-h-[300px] cursor-default"
             >
               <div>
-                <div className="flex justify-between items-start mb-6">
+                <div className="flex justify-between items-start mb-4 md:mb-6">
                   <span
                     className="text-[10px] tracking-widest uppercase bg-stone-100 px-2 py-1 text-neutral-500"
                     style={{ fontFamily: "var(--font-label)" }}
@@ -83,7 +83,7 @@ export function Solution() {
                   />
                 </div>
                 <h3
-                  className="text-2xl md:text-3xl font-black uppercase tracking-tighter mb-2 text-neutral-900"
+                  className="text-xl md:text-3xl font-black uppercase tracking-tighter mb-2 text-neutral-900"
                   style={{ fontFamily: "var(--font-sans)" }}
                 >
                   {card.title}
@@ -96,7 +96,7 @@ export function Solution() {
                 </p>
               </div>
 
-              <div className="mt-10 flex flex-col gap-4">
+              <div className="mt-6 md:mt-10 flex flex-col gap-4">
                 <div className="w-full bg-stone-100 h-px" />
                 <div className="flex justify-between items-end">
                   <span

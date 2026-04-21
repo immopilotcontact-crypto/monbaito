@@ -52,7 +52,7 @@ export function Hero({ onWaitlistSuccess }: HeroProps) {
 
   return (
     <section
-      className="relative min-h-[820px] flex flex-col items-center justify-center px-6 pt-20 pb-32 overflow-hidden"
+      className="relative flex flex-col items-center justify-center px-5 pt-14 pb-20 md:pt-20 md:pb-32 md:min-h-[820px] overflow-hidden"
       aria-labelledby="hero-title"
     >
       {/* Background number decoration */}
@@ -74,7 +74,7 @@ export function Hero({ onWaitlistSuccess }: HeroProps) {
       <div className="max-w-4xl w-full text-center relative z-10">
         <h1
           id="hero-title"
-          className="text-5xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter leading-[0.9] mb-6"
+          className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter leading-[0.9] mb-5 md:mb-6"
           style={{ fontFamily: "var(--font-sans)" }}
         >
           {/* Contenu à remplir */}
@@ -82,7 +82,7 @@ export function Hero({ onWaitlistSuccess }: HeroProps) {
         </h1>
 
         <p
-          className="text-lg md:text-xl text-neutral-500 max-w-2xl mx-auto mb-16 tracking-tight"
+          className="text-base md:text-xl text-neutral-500 max-w-2xl mx-auto mb-10 md:mb-16 tracking-tight"
           style={{ fontFamily: "var(--font-label)" }}
         >
           {/* Contenu à remplir */}
@@ -102,7 +102,7 @@ export function Hero({ onWaitlistSuccess }: HeroProps) {
               monbaito — beta_access.sh
             </span>
           </div>
-          <form onSubmit={handleSubmit} className="flex items-center px-4 py-4 gap-3">
+          <form onSubmit={handleSubmit} className="flex items-center px-3 py-3 md:px-4 md:py-4 gap-2 md:gap-3">
             <span className="text-red-500 text-lg select-none" aria-hidden="true">❯</span>
             <input
               type="email"

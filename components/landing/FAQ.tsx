@@ -42,10 +42,10 @@ const faqs = [
 
 export function FAQ() {
   return (
-    <section id="faq" className="section-spacing px-6" aria-labelledby="faq-title">
+    <section id="faq" className="section-spacing px-5 md:px-6" aria-labelledby="faq-title">
       <div className="max-w-screen-xl mx-auto">
         {/* Section header */}
-        <div className="flex justify-between items-baseline mb-16 border-b border-stone-200 pb-4">
+        <div className="flex justify-between items-baseline mb-8 md:mb-16 border-b border-stone-200 pb-4">
           <h2
             id="faq-title"
             className="text-xl md:text-2xl font-black uppercase tracking-tighter text-neutral-900"

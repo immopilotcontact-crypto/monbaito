@@ -59,7 +59,7 @@ function AnimatedCounter({
 
   return (
     <span
-      className="text-7xl md:text-8xl font-black tracking-tighter leading-none text-red-700 tabular-nums"
+      className="text-6xl md:text-8xl font-black tracking-tighter leading-none text-red-700 tabular-nums"
       style={{ fontFamily: "var(--font-sans)" }}
     >
       {count}
@@ -94,10 +94,10 @@ export function Beta({ externalCount }: BetaProps) {
   }, [externalCount]);
 
   return (
-    <section id="beta" className="section-spacing px-6" aria-labelledby="beta-title">
+    <section id="beta" className="section-spacing px-5 md:px-6" aria-labelledby="beta-title">
       <div className="max-w-screen-xl mx-auto">
         {/* Section header */}
-        <div className="flex justify-between items-baseline mb-16 border-b border-stone-200 pb-4">
+        <div className="flex justify-between items-baseline mb-8 md:mb-16 border-b border-stone-200 pb-4">
           <h2
             id="beta-title"
             className="text-xl md:text-2xl font-black uppercase tracking-tighter text-neutral-900"
@@ -115,7 +115,7 @@ export function Beta({ externalCount }: BetaProps) {
         </div>
 
         {/* Counter */}
-        <div ref={counterRef} className="mb-16 flex items-end gap-4">
+        <div ref={counterRef} className="mb-8 md:mb-16 flex items-end gap-4 flex-wrap">
           <AnimatedCounter target={count} isInView={isInView} />
           <p
             className="text-neutral-500 text-lg mb-2"
@@ -126,7 +126,7 @@ export function Beta({ externalCount }: BetaProps) {
         </div>
 
         {/* Q&A blocks */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-10 md:mb-16">
           {betaBlocks.map((block) => (
             <div key={block.number} className="border-t border-stone-200 pt-6">
               <span

@@ -149,7 +149,7 @@
   }
 
   .section-spacing {
-    @apply py-24 md:py-32;
+    @apply py-16 md:py-24 lg:py-32;
   }
 
   .eyebrow {

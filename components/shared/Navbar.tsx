@@ -30,7 +30,7 @@ export function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full bg-stone-50 border-b border-stone-200/60">
+      <header className="sticky top-0 z-40 w-full bg-red-700 border-b border-red-800">
         <div className="max-w-screen-xl mx-auto px-6 h-28 flex items-center justify-between gap-4">
           {/* Logo */}
           <Link href="/" className="flex-shrink-0">
@@ -39,7 +39,7 @@ export function Navbar() {
               alt="MonBaito"
               width={260}
               height={72}
-              className="h-20 w-auto object-contain"
+              className="h-24 w-auto object-contain brightness-0 invert"
               priority
             />
           </Link>
@@ -48,26 +48,26 @@ export function Navbar() {
           {isOffresPage && (
             <form
               onSubmit={handleSearchSubmit}
-              className="hidden md:flex items-center bg-white border border-stone-200 overflow-hidden"
+              className="hidden md:flex items-center bg-white/10 border border-white/30 overflow-hidden"
             >
               <input
                 type="text"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="Job, secteur..."
-                className="bg-transparent font-label text-xs uppercase tracking-widest text-neutral-700 placeholder:text-neutral-400 px-3 py-2 w-36 outline-none"
+                className="bg-transparent font-label text-xs uppercase tracking-widest text-white placeholder:text-white/60 px-3 py-2 w-36 outline-none"
               />
-              <span className="w-px h-4 bg-stone-200" />
+              <span className="w-px h-4 bg-white/30" />
               <input
                 type="text"
                 value={ville}
                 onChange={(e) => setVille(e.target.value)}
                 placeholder="Ville..."
-                className="bg-transparent font-label text-xs uppercase tracking-widest text-neutral-700 placeholder:text-neutral-400 px-3 py-2 w-28 outline-none"
+                className="bg-transparent font-label text-xs uppercase tracking-widest text-white placeholder:text-white/60 px-3 py-2 w-28 outline-none"
               />
               <button
                 type="submit"
-                className="bg-neutral-900 text-white font-label text-[10px] font-bold tracking-widest uppercase px-3 py-2 hover:bg-red-700 transition-colors"
+                className="bg-white text-red-700 font-label text-[10px] font-bold tracking-widest uppercase px-3 py-2 hover:bg-red-50 transition-colors"
               >
                 OK
               </button>
@@ -78,19 +78,19 @@ export function Navbar() {
           <nav className="hidden md:flex items-center gap-8">
             <Link
               href="/offres"
-              className="font-label text-xs tracking-widest uppercase text-neutral-500 hover:text-neutral-900 transition-colors"
+              className="font-label text-xs tracking-widest uppercase text-white/80 hover:text-white transition-colors"
             >
               Offres
             </Link>
             <Link
               href="/auth/login"
-              className="font-label text-xs tracking-widest uppercase text-neutral-500 hover:text-neutral-900 transition-colors"
+              className="font-label text-xs tracking-widest uppercase text-white/80 hover:text-white transition-colors"
             >
               Connexion
             </Link>
             <Link
               href="/#beta"
-              className="font-label text-xs font-bold tracking-widest uppercase bg-red-700 text-white px-5 py-2 hover:bg-red-800 transition-colors"
+              className="font-label text-xs font-bold tracking-widest uppercase bg-white text-red-700 px-5 py-2 hover:bg-red-50 transition-colors"
             >
               Join Beta
             </Link>
@@ -98,7 +98,7 @@ export function Navbar() {
 
           {/* Mobile hamburger */}
           <button
-            className="md:hidden text-neutral-900 p-1"
+            className="md:hidden text-white p-1"
             onClick={() => setMenuOpen((o) => !o)}
             aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
           >
@@ -114,47 +114,47 @@ export function Navbar() {
             className="absolute inset-0 bg-black/40"
             onClick={() => setMenuOpen(false)}
           />
-          <div className="absolute top-16 left-0 right-0 bg-stone-50 border-b border-stone-200 px-6 py-6 flex flex-col gap-4">
+          <div className="absolute top-16 left-0 right-0 bg-red-700 border-b border-red-800 px-6 py-6 flex flex-col gap-4">
             <Link
               href="/offres"
-              className="font-label text-xs tracking-widest uppercase text-neutral-500 hover:text-neutral-900 transition-colors py-1"
+              className="font-label text-xs tracking-widest uppercase text-white/80 hover:text-white transition-colors py-1"
               onClick={() => setMenuOpen(false)}
             >
               Offres
             </Link>
             <Link
               href="/auth/login"
-              className="font-label text-xs tracking-widest uppercase text-neutral-500 hover:text-neutral-900 transition-colors py-1"
+              className="font-label text-xs tracking-widest uppercase text-white/80 hover:text-white transition-colors py-1"
               onClick={() => setMenuOpen(false)}
             >
               Connexion
             </Link>
             <Link
               href="/#beta"
-              className="font-label text-xs font-bold tracking-widest uppercase bg-red-700 text-white px-5 py-3 text-center hover:bg-red-800 transition-colors"
+              className="font-label text-xs font-bold tracking-widest uppercase bg-white text-red-700 px-5 py-3 text-center hover:bg-red-50 transition-colors"
               onClick={() => setMenuOpen(false)}
             >
               Join Beta
             </Link>
             {isOffresPage && (
-              <form onSubmit={handleSearchSubmit} className="flex flex-col gap-2 mt-2 border-t border-stone-200 pt-4">
+              <form onSubmit={handleSearchSubmit} className="flex flex-col gap-2 mt-2 border-t border-red-600 pt-4">
                 <input
                   type="text"
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
                   placeholder="JOB, SECTEUR..."
-                  className="bg-white border border-stone-200 font-label text-xs uppercase tracking-widest text-neutral-700 placeholder:text-neutral-400 px-3 py-2 outline-none"
+                  className="bg-white/10 border border-white/30 font-label text-xs uppercase tracking-widest text-white placeholder:text-white/60 px-3 py-2 outline-none"
                 />
                 <input
                   type="text"
                   value={ville}
                   onChange={(e) => setVille(e.target.value)}
                   placeholder="VILLE..."
-                  className="bg-white border border-stone-200 font-label text-xs uppercase tracking-widest text-neutral-700 placeholder:text-neutral-400 px-3 py-2 outline-none"
+                  className="bg-white/10 border border-white/30 font-label text-xs uppercase tracking-widest text-white placeholder:text-white/60 px-3 py-2 outline-none"
                 />
                 <button
                   type="submit"
-                  className="bg-neutral-900 text-white font-label text-[10px] font-bold tracking-widest uppercase px-3 py-2 hover:bg-red-700 transition-colors"
+                  className="bg-white text-red-700 font-label text-[10px] font-bold tracking-widest uppercase px-3 py-2 hover:bg-red-50 transition-colors"
                 >
                   Rechercher
                 </button>

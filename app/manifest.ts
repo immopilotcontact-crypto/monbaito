@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "MonBaito",
     short_name: "MonBaito",
     description:
-      "L'IA qui trouve ton job étudiant et détecte les arnaques.",
+      "L'IA qui trouve ton job étudiant — offres vérifiées, candidature en 1 clic.",
     start_url: "/",
     display: "standalone",
     background_color: "#0a0a0f",

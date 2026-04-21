@@ -289,7 +289,7 @@ export function OffresPageClient({
           Trouve ton job étudiant
         </h1>
         <p className="text-sm text-muted-foreground">
-          Toutes les offres sont vérifiées par notre IA — zéro arnaque, zéro perte de temps.
+          Toutes les offres sont vérifiées par notre IA — résultats rapides, sans perte de temps.
         </p>
       </div>
 
@@ -390,7 +390,7 @@ export function OffresPageClient({
             className="absolute inset-0 bg-black/60"
             onClick={() => setMobileFilterOpen(false)}
           />
-          <div className="relative ml-auto w-[300px] h-full bg-background overflow-y-auto p-6">
+          <div className="relative ml-auto w-full sm:w-[320px] h-full bg-background overflow-y-auto p-5 sm:p-6">
             <div className="flex justify-between items-center mb-4">
               <span className="font-semibold text-foreground">Filtres</span>
               <button
