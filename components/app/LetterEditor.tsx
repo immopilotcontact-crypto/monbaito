@@ -81,14 +81,14 @@ export function LetterEditor({ offerId, offerUrl, companyName, offerTitle, match
       ) : (
         <div className="space-y-4">
           <div>
-            <label className="block text-sm text-[var(--muted-foreground)] mb-2">
+            <label className="block text-sm text-muted-foreground mb-2" style={{ fontFamily: "var(--font-label)" }}>
               Ta lettre de motivation — éditable
             </label>
             <textarea
               value={letter}
               onChange={(e) => setLetter(e.target.value)}
               rows={12}
-              className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-xl text-white text-sm leading-relaxed focus:outline-none focus:border-[var(--accent)] resize-y"
+              className="form-input resize-y text-sm leading-relaxed"
             />
           </div>
           <div className="flex gap-3">
@@ -102,7 +102,7 @@ export function LetterEditor({ offerId, offerUrl, companyName, offerTitle, match
             </button>
             <button
               onClick={generate}
-              className="px-4 py-2.5 rounded-xl border border-white/10 text-sm text-white/60 hover:text-white hover:bg-white/5 transition-colors"
+              className="px-4 py-2.5 border border-border text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
               title="Régénérer"
             >
               ↺
@@ -119,16 +119,16 @@ export function LetterEditor({ offerId, offerUrl, companyName, offerTitle, match
       {/* Popup J+0 */}
       {showAppliedPopup && !applied && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4">
-          <div className="bg-[#1a1a2e] border border-white/10 rounded-2xl p-6 max-w-sm w-full shadow-2xl">
-            <h3 className="font-semibold text-white text-lg mb-2 flex items-center gap-2"><Target size={18} />Tu as postulé ?</h3>
-            <p className="text-[var(--muted-foreground)] text-sm mb-5">
+          <div className="bg-card border border-border p-6 max-w-sm w-full shadow-2xl">
+            <h3 className="font-black text-foreground text-lg mb-2 flex items-center gap-2 uppercase tracking-tight" style={{ fontFamily: "var(--font-sans)" }}><Target size={18} />Tu as postulé ?</h3>
+            <p className="text-muted-foreground text-sm mb-5" style={{ fontFamily: "var(--font-label)" }}>
               Pour {offerTitle} chez {companyName ?? "cette entreprise"}
             </p>
             <div className="flex gap-3">
               <button onClick={markApplied} className="btn-cta flex-1 justify-center">
                 Oui, j&apos;ai postulé
               </button>
-              <button onClick={() => setShowAppliedPopup(false)} className="flex-1 px-4 py-2.5 rounded-xl border border-white/10 text-sm text-white/60 hover:text-white">
+              <button onClick={() => setShowAppliedPopup(false)} className="flex-1 px-4 py-2.5 border border-border text-sm text-muted-foreground hover:text-foreground transition-colors" style={{ fontFamily: "var(--font-label)" }}>
                 Pas encore
               </button>
             </div>

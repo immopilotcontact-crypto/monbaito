@@ -8,10 +8,10 @@ import Link from "next/link";
 import type { TrustReason } from "@/types/database";
 
 const SEVERITY_STYLES: Record<string, string> = {
-  positive: "text-emerald-400 bg-emerald-400/10",
-  neutral: "text-white/50 bg-white/5",
-  warning: "text-amber-400 bg-amber-400/10",
-  critical: "text-red-400 bg-red-400/10",
+  positive: "text-emerald-600 bg-emerald-50",
+  neutral:  "text-muted-foreground bg-muted",
+  warning:  "text-amber-600 bg-amber-50",
+  critical: "text-red-600 bg-red-50",
 };
 
 function SeverityIcon({ severity }: { severity: string }) {
@@ -69,7 +69,7 @@ export default async function OfferPage({ params }: { params: Promise<{ id: stri
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
       {/* Retour */}
-      <Link href="/dashboard" className="inline-flex items-center gap-1.5 text-sm text-[var(--muted-foreground)] hover:text-white mb-6 transition-colors">
+      <Link href="/dashboard" className="inline-flex items-center gap-1.5 text-sm text-[var(--muted-foreground)] hover:text-foreground mb-6 transition-colors">
         <ArrowLeft size={14} />
         Retour aux offres
       </Link>
@@ -78,7 +78,7 @@ export default async function OfferPage({ params }: { params: Promise<{ id: stri
       <div className="mb-8">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white mb-1">{raw?.title}</h1>
+            <h1 className="text-2xl font-bold text-foreground mb-1">{raw?.title}</h1>
             <div className="flex items-center gap-2">
               <Building2 size={14} className="text-[var(--muted-foreground)]" />
               <span className="text-[var(--muted-foreground)]">{raw?.company_name ?? "Entreprise"}</span>
@@ -90,7 +90,7 @@ export default async function OfferPage({ params }: { params: Promise<{ id: stri
             </div>
           </div>
           {raw?.url && (
-            <a href={raw.url} target="_blank" rel="noopener noreferrer" className="shrink-0 p-2 rounded-xl border border-white/10 text-white/40 hover:text-white hover:bg-white/5 transition-colors">
+            <a href={raw.url} target="_blank" rel="noopener noreferrer" className="shrink-0 p-2 rounded-xl border border-border text-foreground/40 hover:text-foreground hover:bg-muted transition-colors">
               <ExternalLink size={16} />
             </a>
           )}
@@ -103,9 +103,9 @@ export default async function OfferPage({ params }: { params: Promise<{ id: stri
       </div>
 
       {/* Trust Score */}
-      <section className="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-5 mb-6">
+      <section className="bg-card border border-border rounded-2xl p-5 mb-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-semibold text-white">Trust Score</h2>
+          <h2 className="font-semibold text-foreground">Trust Score</h2>
           <TrustBadge score={offer.trust_score} size="lg" />
         </div>
         {trustReasons.length > 0 ? (
@@ -120,14 +120,14 @@ export default async function OfferPage({ params }: { params: Promise<{ id: stri
             ))}
           </ul>
         ) : (
-          <p className="text-sm text-white/30">Score en cours de calcul…</p>
+          <p className="text-sm text-foreground/30">Score en cours de calcul…</p>
         )}
       </section>
 
       {/* Feedback entreprise (si dispo) */}
       {companyStats && Number(companyStats.total_applications) > 0 && (
-        <section className="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-5 mb-6">
-          <h2 className="font-semibold text-white mb-4">Ce que disent les étudiants</h2>
+        <section className="bg-card border border-border rounded-2xl p-5 mb-6">
+          <h2 className="font-semibold text-foreground mb-4">Ce que disent les étudiants</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <Stat label="Candidatures" value={String(companyStats.total_applications)} />
             <Stat label="Taux de réponse" value={companyStats.response_rate_pct ? `${companyStats.response_rate_pct}%` : "—"} />
@@ -144,15 +144,15 @@ export default async function OfferPage({ params }: { params: Promise<{ id: stri
       )}
 
       {/* Description */}
-      <section className="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-5 mb-6">
-        <h2 className="font-semibold text-white mb-3">Description du poste</h2>
+      <section className="bg-card border border-border rounded-2xl p-5 mb-6">
+        <h2 className="font-semibold text-foreground mb-3">Description du poste</h2>
         {raw?.description ? (
           <p className="text-sm text-[var(--muted-foreground)] leading-relaxed whitespace-pre-wrap">
             {raw.description.slice(0, 3000)}
             {raw.description.length > 3000 && "…"}
           </p>
         ) : (
-          <p className="text-sm text-white/30">Pas de description disponible.</p>
+          <p className="text-sm text-foreground/30">Pas de description disponible.</p>
         )}
       </section>
 
@@ -180,7 +180,7 @@ export default async function OfferPage({ params }: { params: Promise<{ id: stri
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="text-center">
-      <p className="text-lg font-bold text-white">{value}</p>
+      <p className="text-lg font-bold text-foreground">{value}</p>
       <p className="text-xs text-[var(--muted-foreground)] mt-0.5">{label}</p>
     </div>
   );

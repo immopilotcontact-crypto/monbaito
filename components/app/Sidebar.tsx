@@ -8,10 +8,10 @@ import { createClient } from "@/lib/supabase-browser";
 import { useRouter } from "next/navigation";
 
 const NAV_ITEMS = [
-  { href: "/dashboard", label: "Accueil", icon: Home },
-  { href: "/candidatures", label: "Candidatures", icon: Briefcase },
-  { href: "/profil", label: "Profil", icon: User },
-  { href: "/settings", label: "Paramètres", icon: Settings },
+  { href: "/dashboard",     label: "Accueil",       icon: Home },
+  { href: "/candidatures",  label: "Candidatures",  icon: Briefcase },
+  { href: "/profil",        label: "Profil",        icon: User },
+  { href: "/settings",      label: "Paramètres",    icon: Settings },
 ];
 
 interface SidebarProps {
@@ -20,7 +20,7 @@ interface SidebarProps {
 
 export function Sidebar({ firstName }: SidebarProps) {
   const pathname = usePathname();
-  const router = useRouter();
+  const router   = useRouter();
   const supabase = createClient();
 
   async function handleLogout() {
@@ -30,22 +30,30 @@ export function Sidebar({ firstName }: SidebarProps) {
   }
 
   return (
-    <aside className="hidden md:flex flex-col w-60 min-h-screen bg-white/[0.03] border-r border-white/[0.06] px-4 py-6 shrink-0">
-      <Link href="/dashboard" className="flex items-center gap-2 px-2 mb-8">
+    <aside className="hidden md:flex flex-col w-60 min-h-screen bg-card border-r border-border px-4 py-6 shrink-0">
+      <Link href="/" className="flex items-center gap-2 px-2 mb-8">
         <Image
           src="/logo.png"
           alt="MonBaito"
-          width={100}
-          height={32}
-          className="h-8 w-auto object-contain"
+          width={160}
+          height={44}
+          className="h-11 w-auto object-contain"
           priority
         />
-        <span className="text-xs text-[var(--accent)] font-medium bg-[var(--accent)]/10 px-1.5 py-0.5 rounded-full">beta</span>
+        <span
+          className="text-[10px] text-accent font-bold bg-accent/10 px-1.5 py-0.5 uppercase tracking-widest"
+          style={{ fontFamily: "var(--font-label)" }}
+        >
+          beta
+        </span>
       </Link>
 
       {firstName && (
-        <p className="text-sm text-[var(--muted-foreground)] px-2 mb-6">
-          Bonjour, <span className="text-white font-medium">{firstName}</span>
+        <p
+          className="text-sm text-muted-foreground px-2 mb-6"
+          style={{ fontFamily: "var(--font-label)" }}
+        >
+          Bonjour, <span className="text-foreground font-semibold">{firstName}</span>
         </p>
       )}
 
@@ -56,11 +64,12 @@ export function Sidebar({ firstName }: SidebarProps) {
             <Link
               key={href}
               href={href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+              className={`flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-colors ${
                 active
-                  ? "bg-[var(--accent)]/15 text-[var(--accent)]"
-                  : "text-[var(--muted-foreground)] hover:text-white hover:bg-white/5"
+                  ? "bg-accent/10 text-accent"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
               }`}
+              style={{ fontFamily: "var(--font-label)" }}
             >
               <Icon size={18} />
               {label}
@@ -71,7 +80,8 @@ export function Sidebar({ firstName }: SidebarProps) {
 
       <button
         onClick={handleLogout}
-        className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-[var(--muted-foreground)] hover:text-white hover:bg-white/5 transition-colors mt-4"
+        className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors mt-4"
+        style={{ fontFamily: "var(--font-label)" }}
       >
         <LogOut size={18} />
         Déconnexion

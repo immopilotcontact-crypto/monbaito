@@ -6,7 +6,7 @@ interface TrustBadgeProps {
 export function TrustBadge({ score, size = "md" }: TrustBadgeProps) {
   if (score === null) {
     return (
-      <span className="inline-flex items-center gap-1 text-xs text-white/40 bg-white/5 px-2 py-0.5 rounded-full">
+      <span className="inline-flex items-center gap-1 text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
         Non évalué
       </span>
     );

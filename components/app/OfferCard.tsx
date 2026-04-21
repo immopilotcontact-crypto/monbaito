@@ -37,12 +37,12 @@ export function OfferCard({ match, onDismiss }: OfferCardProps) {
     : null;
 
   return (
-    <article className="group relative bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.06] hover:border-white/[0.12] rounded-2xl p-4 transition-all">
+    <article className="group relative bg-card hover:bg-muted/50 border border-border hover:border-border/80 rounded-xl p-4 transition-all">
       {onDismiss && (
         <button
           onClick={() => onDismiss(match.id)}
           aria-label="Pas intéressé"
-          className="absolute top-3 right-3 p-1.5 rounded-lg text-white/20 hover:text-white/60 hover:bg-white/5 transition-colors opacity-0 group-hover:opacity-100"
+          className="absolute top-3 right-3 p-1.5 text-muted-foreground/40 hover:text-muted-foreground hover:bg-muted transition-colors opacity-0 group-hover:opacity-100"
         >
           <X size={14} />
         </button>
@@ -50,15 +50,28 @@ export function OfferCard({ match, onDismiss }: OfferCardProps) {
 
       <div className="flex items-start justify-between gap-3 pr-8">
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-white truncate">{raw.title}</h3>
-          <p className="text-sm text-[var(--muted-foreground)] mt-0.5">{raw.company_name}</p>
+          <h3
+            className="font-bold text-foreground truncate uppercase tracking-tight"
+            style={{ fontFamily: "var(--font-sans)" }}
+          >
+            {raw.title}
+          </h3>
+          <p
+            className="text-sm text-muted-foreground mt-0.5"
+            style={{ fontFamily: "var(--font-label)" }}
+          >
+            {raw.company_name}
+          </p>
         </div>
         <div className="shrink-0">
           <TrustBadge score={enriched.trust_score} size="sm" />
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3 text-xs text-[var(--muted-foreground)]">
+      <div
+        className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3 text-xs text-muted-foreground"
+        style={{ fontFamily: "var(--font-label)" }}
+      >
         {raw.location_city && (
           <span className="flex items-center gap-1">
             <MapPin size={12} />
@@ -79,21 +92,24 @@ export function OfferCard({ match, onDismiss }: OfferCardProps) {
           </span>
         )}
         {raw.posted_at && (
-          <span className="text-white/30">{timeAgo(raw.posted_at)}</span>
+          <span className="text-muted-foreground/60">{timeAgo(raw.posted_at)}</span>
         )}
       </div>
 
       <div className="flex items-center justify-between mt-4">
         {match.match_score !== null && (
-          <span className="text-xs text-white/30">
+          <span
+            className="text-xs text-muted-foreground"
+            style={{ fontFamily: "var(--font-label)" }}
+          >
             Match{" "}
             <span
-              className={`font-semibold ${
+              className={`font-bold ${
                 match.match_score >= 80
-                  ? "text-emerald-400"
+                  ? "text-emerald-600"
                   : match.match_score >= 60
-                  ? "text-amber-400"
-                  : "text-white/60"
+                  ? "text-amber-600"
+                  : "text-muted-foreground"
               }`}
             >
               {Math.round(match.match_score)}%
@@ -102,7 +118,8 @@ export function OfferCard({ match, onDismiss }: OfferCardProps) {
         )}
         <Link
           href={`/offre/${enriched.id}`}
-          className="ml-auto text-sm font-medium text-[var(--accent)] hover:underline"
+          className="ml-auto text-sm font-bold text-accent hover:underline"
+          style={{ fontFamily: "var(--font-label)" }}
         >
           Voir →
         </Link>

@@ -16,7 +16,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     .single();
 
   return (
-    <div className="dark flex min-h-screen bg-[var(--background)]">
+    <div className="flex min-h-screen bg-background">
       <Sidebar firstName={profile?.first_name} />
       <main className="flex-1 overflow-x-hidden pb-20 md:pb-0">
         {children}
