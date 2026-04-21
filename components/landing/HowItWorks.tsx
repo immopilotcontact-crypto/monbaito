@@ -5,27 +5,27 @@ import { motion, useReducedMotion } from "framer-motion";
 const steps = [
   {
     number: "01",
-    title: "Tu crées ton profil en 2 minutes.",
+    title: "Vous configurez votre profil en 2 minutes.",
     description:
-      "Ton niveau d'études, ta ville, tes dispos, et surtout tes red flags personnels : 'pas de porte-à-porte', 'pas plus de 30 min de transport', 'salaire au SMIC minimum'. MonBaito retient.",
+      "Niveau d'études, ville, disponibilités, secteur souhaité, type de contrat. Plus votre profil est précis, plus les suggestions de l'IA sont pertinentes.",
   },
   {
     number: "02",
-    title: "L'IA scanne 20+ sources toutes les 3 heures.",
+    title: "L'IA scanne 20+ sources chaque jour.",
     description:
-      "Indeed, HelloWork, Jobteaser, France Travail, pages carrières des grandes enseignes, groupes locaux. Rien ne lui échappe, et la base s'enrichit du feedback de chaque étudiant.",
+      "Indeed, HelloWork, Jobteaser, France Travail, pages carrières des grandes enseignes, groupes locaux. La base s'enrichit en continu du retour de chaque étudiant.",
   },
   {
     number: "03",
-    title: "Chaque offre reçoit un Trust Score.",
+    title: "Seules les offres qui vous correspondent remontent.",
     description:
-      "Vérification SIRENE de l'entreprise, cohérence du salaire avec le marché, détection des patterns d'arnaque par IA, avis d'anciens candidats. Tu vois en un coup d'œil si c'est safe, et pourquoi.",
+      "Notre algorithme de matching analyse chaque annonce et la compare à votre profil. Vous ne voyez que ce qui vous est vraiment adapté — ni trop large, ni hors sujet.",
   },
   {
     number: "04",
-    title: "Tu postules en un clic, avec une lettre sur mesure.",
+    title: "Vous postulez en un clic, ou on le fait pour vous.",
     description:
-      "L'IA rédige une lettre de motivation adaptée à cette offre précise, à partir de ton CV. Tu relis, tu ajustes si tu veux, tu envoies. Plus de copier-coller.",
+      "L'IA rédige une lettre de motivation personnalisée à partir de votre CV et de l'offre. Vous relisez, ajustez si vous le souhaitez, et envoyez — ou laissez MonBaito postuler à votre place lorsque c'est possible.",
   },
 ];
 

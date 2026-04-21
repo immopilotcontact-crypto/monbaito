@@ -9,29 +9,34 @@ import {
 
 const faqs = [
   {
-    question: "C'est quoi exactement, concrètement ?",
+    question: "Qu'est-ce que MonBaito, concrètement ?",
     answer:
-      "Une web app qui s'installe comme une vraie app sur ton téléphone (mais qui marche aussi sur ordinateur). Elle va chercher les offres d'emploi étudiantes à ta place, les trie, détecte les arnaques, et t'aide à postuler plus vite et mieux. Pas de magie : juste de la bonne IA bien utilisée.",
+      "MonBaito est une plateforme conçue pour les étudiants, par un étudiant. Notre IA analyse votre profil — niveau d'études, disponibilités, secteur souhaité — et sélectionne pour vous les offres les plus pertinentes parmi des dizaines de sources. Elle peut également postuler à votre place lorsque c'est possible, pour vous faire gagner un maximum de temps.",
   },
   {
-    question: "Pourquoi je devrais te faire confiance ?",
+    question: "Comment fonctionne la personnalisation ?",
     answer:
-      "Tu n'es pas obligé. Tu laisses ton email, tu attends qu'on lance la beta en mai, tu testes gratuitement, tu décides si ça te sert. Zéro engagement, zéro arnaque.",
+      "Lors de la configuration de votre profil, vous renseignez vos préférences : secteur, ville, type de contrat, disponibilités et critères personnels. Notre IA utilise ces informations pour vous proposer uniquement les offres qui correspondent vraiment à votre situation, et non une liste générique.",
   },
   {
-    question: "Mes données, tu en fais quoi ?",
+    question: "C'est quoi les groupes d'entraide ?",
     answer:
-      "Rien d'autre que de les utiliser pour te servir. Je ne les revends pas, je ne les partage pas, je ne les utilise pas pour entraîner des IA. Tu peux supprimer ton compte et toutes tes infos à tout moment, d'un clic. C'est dans le RGPD, je l'applique à la lettre.",
+      "MonBaito intègre un espace communautaire où les étudiants peuvent s'organiser en groupes publics ou privés : partager des bons plans, s'entraider sur les candidatures, donner des retours sur des employeurs. Ces groupes sont strictement modérés pour garantir un environnement sain et bienveillant.",
   },
   {
-    question: "Tu es qui, toi ?",
+    question: "Que faites-vous de mes données ?",
     answer:
-      "Je m'appelle Morii, j'ai 19 ans, je suis étudiant en BTS NDRC à Rouen. J'ai galéré 6 mois à chercher un job étudiant avec les plateformes actuelles. J'ai fini par me dire que si personne ne construisait l'outil qui manque, j'allais le faire moi-même.",
+      "Vos données sont utilisées exclusivement pour vous fournir le service. Elles ne sont ni revendues, ni partagées avec des tiers, ni utilisées pour entraîner des modèles d'IA externes. Vous pouvez supprimer votre compte et l'intégralité de vos informations à tout moment, depuis votre espace personnel. Nous appliquons le RGPD à la lettre.",
   },
   {
-    question: "Quand ça sort pour de vrai ?",
+    question: "Qui est derrière MonBaito ?",
     answer:
-      "La beta privée démarre en mai 2026 avec les 100 premiers inscrits. La version publique suit si la beta se passe bien. En t'inscrivant aujourd'hui, tu es prioritaire sur les 100 places.",
+      "MonBaito est né de l'expérience directe d'un étudiant en BTS à Rouen, qui a passé des mois à chercher un job étudiant sans trouver d'outil vraiment adapté. Le projet est porté par une équipe qui croit qu'il est possible de construire quelque chose de mieux, ensemble, avec les premiers utilisateurs.",
+  },
+  {
+    question: "Quand la beta est-elle disponible ?",
+    answer:
+      "La beta privée ouvre en mai 2026 pour les 100 premiers inscrits. L'accès est entièrement gratuit. En vous inscrivant dès maintenant, vous êtes prioritaire sur les places disponibles et vous contribuez directement à façonner le produit.",
   },
 ];
 
@@ -47,7 +52,7 @@ export function FAQ() {
             style={{ fontFamily: "var(--font-sans)" }}
           >
             {/* Contenu à remplir */}
-            Ce que tu te demandes sûrement.
+            Questions fréquentes.
           </h2>
         </div>
 

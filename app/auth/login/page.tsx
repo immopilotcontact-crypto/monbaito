@@ -11,9 +11,9 @@ import { ShieldCheck, Zap, Eye, EyeOff } from "lucide-react";
 import { Loader2 } from "lucide-react";
 
 const TRUST_POINTS = [
-  { icon: ShieldCheck, label: "Offres vérifiées anti-arnaque" },
-  { icon: Zap, label: "Candidature en 1 clic" },
-  { icon: ShieldCheck, label: "Tes données ne sont jamais revendues" },
+  { icon: Zap, label: "Matching IA selon votre profil" },
+  { icon: ShieldCheck, label: "Candidature en 1 clic ou automatique" },
+  { icon: ShieldCheck, label: "Vos données ne sont jamais revendues" },
 ];
 
 function LoginForm() {
@@ -132,9 +132,9 @@ function LoginForm() {
           Pourquoi MonBaito ?
         </p>
         <h2 className="text-4xl font-black uppercase tracking-tighter text-foreground mb-8 leading-tight">
-          Fini les arnaques.
+          Votre job étudiant,
           <br />
-          Fini les heures perdues.
+          trouvé pour vous.
         </h2>
         <div className="space-y-4">
           {TRUST_POINTS.map(({ icon: Icon, label }) => (
@@ -151,7 +151,7 @@ function LoginForm() {
 
         <div className="mt-12 p-4 border border-border bg-background">
           <p className="text-sm text-foreground font-medium mb-1">
-            &quot;MonBaito m&apos;a évité une arnaque en 2 minutes.&quot;
+            &quot;J&apos;ai trouvé un job en 3 jours, sans galérer.&quot;
           </p>
           <p className="text-xs text-muted-foreground" style={{ fontFamily: "var(--font-label)" }}>
             — Emma, étudiante en L2, Rouen

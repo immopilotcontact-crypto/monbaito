@@ -1,9 +1,9 @@
 "use client";
 
 const features = [
-  { number: "01", label: "Smart Profile Match" },
-  { number: "02", label: "AI-Driven Trust Check" },
-  { number: "03", label: "Instant Discovery" },
+  { number: "01", label: "Profil personnalisé" },
+  { number: "02", label: "Matching par l'IA" },
+  { number: "03", label: "Candidature automatique" },
 ];
 
 export function Problem() {
@@ -20,18 +20,16 @@ export function Problem() {
             className="text-4xl md:text-6xl lg:text-7xl font-black uppercase tracking-tighter leading-[0.92] mb-10 text-neutral-900"
             style={{ fontFamily: "var(--font-sans)" }}
           >
-            {/* Contenu à remplir */}
-            Le travail n&apos;est pas ton identité.
+            Votre temps vaut mieux que ça.
           </h2>
           <p
             className="text-lg text-neutral-600 leading-relaxed max-w-xl"
             style={{ fontFamily: "var(--font-label)" }}
           >
-            {/* Contenu à remplir */}
-            Les plateformes d&apos;emploi n&apos;ont pas été pensées pour toi.
-            MLM déguisés, stages illégaux, CV qui disparaissent dans le vide.
-            MonBaito analyse les offres pour toi, détecte les arnaques et t&apos;aide
-            à postuler plus vite et mieux.
+            Les plateformes d&apos;emploi actuelles n&apos;ont pas été conçues pour les étudiants.
+            Des heures passées à chercher, des candidatures sans réponse, des offres inadaptées.
+            MonBaito change ça : une IA qui comprend votre profil, sélectionne les meilleures offres
+            et peut postuler à votre place.
           </p>
         </div>
 

@@ -18,7 +18,7 @@ export function Footer() {
               />
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed mb-5">
-              L&apos;agent IA qui trouve ton job étudiant et te protège des arnaques.
+              La plateforme IA qui trouve votre job étudiant et postule à votre place.
             </p>
             {/* Social icons */}
             <div className="flex items-center gap-3">
