@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase-server";
 import { TrustBadge } from "@/components/app/TrustBadge";
 import { LetterEditor } from "@/components/app/LetterEditor";
 import { ArrowLeft, ExternalLink, MapPin, Euro, Clock, Building2, CheckCircle, AlertTriangle, XCircle, Minus } from "lucide-react";
+import { RatingWidget } from "@/components/offres/RatingWidget";
 import Link from "next/link";
 import type { TrustReason } from "@/types/database";
 
@@ -154,6 +155,9 @@ export default async function OfferPage({ params }: { params: Promise<{ id: stri
           <p className="text-sm text-white/30">Pas de description disponible.</p>
         )}
       </section>
+
+      {/* Community ratings */}
+      <RatingWidget offerId={id} />
 
       {/* Lettre de motivation */}
       {session ? (

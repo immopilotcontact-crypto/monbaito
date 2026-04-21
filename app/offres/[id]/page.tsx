@@ -6,6 +6,7 @@ import { PostulerButton } from "@/components/offres/PostulerButton";
 import { TrustBadge } from "@/components/offres/TrustBadge";
 import { Footer } from "@/components/shared/Footer";
 import { ArrowLeft, MapPin, Clock, Banknote, Building2, CalendarDays, CheckCircle, AlertTriangle, XCircle, Minus, BadgeCheck } from "lucide-react";
+import { RatingWidget } from "@/components/offres/RatingWidget";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -277,6 +278,9 @@ export default async function OffrePage({ params }: Props) {
                   Connexion requise pour postuler
                 </p>
               </div>
+
+              {/* Community ratings */}
+              <RatingWidget offerId={offre.id} />
             </div>
           </div>
         </div>
