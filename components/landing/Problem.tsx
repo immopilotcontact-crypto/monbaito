@@ -27,7 +27,7 @@ export function Problem() {
             className="text-lg text-neutral-600 leading-relaxed max-w-xl"
             style={{ fontFamily: "var(--font-label)" }}
           >
-            Indeed, HelloWork, France Travail — ces plateformes ont été construites pour tout le monde.
+            Les plateformes d&apos;aujourd&apos;hui ont été construites pour tout le monde.
             Pas pour toi. Pas pour ton emploi du temps, ton niveau, ta ville, tes contraintes d&apos;étudiant.
             Résultat : des heures à trier des offres qui ne correspondent pas, des candidatures envoyées dans le vide,
             et souvent l&apos;impression d&apos;être laissé de côté.
