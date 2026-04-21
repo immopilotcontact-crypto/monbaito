@@ -20,16 +20,18 @@ export function Problem() {
             className="text-4xl md:text-6xl lg:text-7xl font-black uppercase tracking-tighter leading-[0.92] mb-10 text-neutral-900"
             style={{ fontFamily: "var(--font-sans)" }}
           >
-            Votre temps vaut mieux que ça.
+            Trouver un job étudiant,
+            c&apos;est pas censé être si dur.
           </h2>
           <p
             className="text-lg text-neutral-600 leading-relaxed max-w-xl"
             style={{ fontFamily: "var(--font-label)" }}
           >
-            Les plateformes d&apos;emploi actuelles n&apos;ont pas été conçues pour les étudiants.
-            Des heures passées à chercher, des candidatures sans réponse, des offres inadaptées.
-            MonBaito change ça : une IA qui comprend votre profil, sélectionne les meilleures offres
-            et peut postuler à votre place.
+            Indeed, HelloWork, France Travail — ces plateformes ont été construites pour tout le monde.
+            Pas pour toi. Pas pour ton emploi du temps, ton niveau, ta ville, tes contraintes d&apos;étudiant.
+            Résultat : des heures à trier des offres qui ne correspondent pas, des candidatures envoyées dans le vide,
+            et souvent l&apos;impression d&apos;être laissé de côté.
+            MonBaito existe pour changer ça.
           </p>
         </div>
 
