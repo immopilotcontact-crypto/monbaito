@@ -47,6 +47,7 @@ export async function getOffres(
     let query = supabase
       .from("enriched_offers")
       .select("*, raw_offers(*)", { count: "exact" })
+      .not("contract_type_clean", "eq", "other")
       .order("enriched_at", { ascending: false })
       .range(from, to);
 

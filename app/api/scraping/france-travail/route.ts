@@ -51,7 +51,6 @@ function mapContractType(typeContrat: string | undefined): string {
   if (!typeContrat) return "other";
   const t = typeContrat.toUpperCase();
   if (["CDD", "MIS"].includes(t)) return "student";
-  if (t === "CDI") return "student";
   if (t.includes("ALT") || t.includes("APP") || t.includes("PRO")) return "alternance";
   if (t === "SAI") return "seasonal";
   if (t === "STG") return "internship";
@@ -78,12 +77,18 @@ export async function GET(request: Request) {
     const token = await getFTToken();
     const supabase = createServiceClient();
 
-    // Scrape les jobs étudiants, stages, alternances
+    // Scrape uniquement les jobs étudiants (temps partiel, saisonnier, intérim)
+    // Mots-clés ciblés sur les secteurs étudiants + contrats adaptés
     const queries = [
-      "typeContrat=CDD&tempsPlein=false",
-      "typeContrat=STG",
-      "typeContrat=ALT",
+      "typeContrat=CDD&tempsPlein=false&motsCles=etudiant",
+      "typeContrat=CDD&tempsPlein=false&motsCles=serveur",
+      "typeContrat=CDD&tempsPlein=false&motsCles=caissier",
+      "typeContrat=CDD&tempsPlein=false&motsCles=livreur",
+      "typeContrat=CDD&tempsPlein=false&motsCles=baby-sitter",
+      "typeContrat=CDD&tempsPlein=false&motsCles=vendeur",
+      "typeContrat=SAI&motsCles=etudiant",
       "typeContrat=SAI",
+      "typeContrat=MIS&tempsPlein=false",
     ];
 
     let totalInserted = 0;
