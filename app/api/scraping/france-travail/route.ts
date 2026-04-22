@@ -130,6 +130,7 @@ export async function GET(request: Request) {
             contract_type: mapContractType(o.typeContrat),
             posted_at: o.dateCreation ?? null,
             raw_data: o as Record<string, unknown>,
+            scraped_at: new Date().toISOString(), // Rafraîchit la date à chaque scrape pour sync temps réel
           },
           { onConflict: "source,source_id" }
         );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import {
   SlidersHorizontal, X, ChevronLeft, ChevronRight,
@@ -8,9 +8,8 @@ import {
   Bike, Headphones, Package, Briefcase, Sparkles,
   type LucideIcon,
 } from "lucide-react";
-import Link from "next/link";
 import type { EnrichedOfferWithRaw } from "@/types/database";
-import { matchesSecteur, SECTEURS } from "@/lib/secteurs";
+import { SECTEURS } from "@/lib/secteurs";
 import { SearchBar } from "./SearchBar";
 import { SortSelect } from "./SortSelect";
 import { FilterPanel } from "./FilterPanel";
@@ -60,40 +59,24 @@ function Pagination({
   page: number;
   onPageChange: (p: number) => void;
 }) {
-  const totalPages = Math.ceil(total / 20);
+  const totalPages = Math.ceil(total / 40);
   if (totalPages <= 1) return null;
 
-  // Generate page numbers with ellipsis
   function getPageNumbers(): (number | "...")[] {
-    if (totalPages <= 7) {
-      return Array.from({ length: totalPages }, (_, i) => i + 1);
-    }
+    if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
     const pages: (number | "...")[] = [];
     if (page <= 4) {
       pages.push(1, 2, 3, 4, 5, "...", totalPages);
     } else if (page >= totalPages - 3) {
-      pages.push(
-        1,
-        "...",
-        totalPages - 4,
-        totalPages - 3,
-        totalPages - 2,
-        totalPages - 1,
-        totalPages
-      );
+      pages.push(1, "...", totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
     } else {
       pages.push(1, "...", page - 1, page, page + 1, "...", totalPages);
     }
     return pages;
   }
 
-  const pageNumbers = getPageNumbers();
-
   return (
-    <nav
-      className="flex items-center justify-center gap-1 mt-8"
-      aria-label="Pagination"
-    >
+    <nav className="flex items-center justify-center gap-1 mt-8" aria-label="Pagination">
       <button
         onClick={() => onPageChange(page - 1)}
         disabled={page <= 1}
@@ -103,11 +86,9 @@ function Pagination({
         Précédent
       </button>
 
-      {pageNumbers.map((p, i) =>
+      {getPageNumbers().map((p, i) =>
         p === "..." ? (
-          <span key={`ellipsis-${i}`} className="px-2 text-muted-foreground text-sm">
-            ...
-          </span>
+          <span key={`ellipsis-${i}`} className="px-2 text-muted-foreground text-sm">...</span>
         ) : (
           <button
             key={p}
@@ -125,7 +106,7 @@ function Pagination({
 
       <button
         onClick={() => onPageChange(page + 1)}
-        disabled={page >= totalPages}
+        disabled={page >= Math.ceil(total / 40)}
         className="flex items-center gap-1 px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
       >
         Suivant
@@ -150,105 +131,60 @@ export function OffresPageClient({
   initialSort,
 }: OffresPageClientProps) {
   const router = useRouter();
-
-  // Search bar state
-  const [q, setQ] = useState(initialQ);
-  const [ville, setVille] = useState(initialVille);
-  const [type, setType] = useState(initialType);
-
-  // Filter state
-  const [secteurs, setSecteurs] = useState<string[]>(initialSecteurs);
-  const [types, setTypes] = useState<string[]>(initialTypes);
-  const [trustMin, setTrustMin] = useState(initialTrustMin);
-  const [salaireMin, setSalaireMin] = useState(initialSalaireMin);
-  const [distance, setDistance] = useState(initialDistance);
-
-  // Sort & UI state
-  const [sort, setSort] = useState(initialSort);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
 
-  const filteredOffres = useMemo(() => {
-    let results = [...initialOffres];
-
-    // 1. Text filter
-    if (q.trim()) {
-      const qLower = q.toLowerCase();
-      results = results.filter(
-        (o) =>
-          o.raw_offers.title.toLowerCase().includes(qLower) ||
-          (o.raw_offers.company_name?.toLowerCase().includes(qLower) ?? false) ||
-          (o.raw_offers.description?.toLowerCase().includes(qLower) ?? false)
+  // Sort côté client uniquement pour "salaire" (tri serveur = "trust")
+  const displayOffres = useMemo(() => {
+    if (initialSort === "salaire") {
+      return [...initialOffres].sort(
+        (a, b) => (b.raw_offers.salary_min ?? -1) - (a.raw_offers.salary_min ?? -1)
       );
     }
+    return initialOffres;
+  }, [initialOffres, initialSort]);
 
-    // 2. Ville filter
-    if (ville.trim()) {
-      const villeLower = ville.toLowerCase();
-      results = results.filter((o) =>
-        (o.raw_offers.location_city?.toLowerCase().includes(villeLower) ?? false)
-      );
+  function buildUrl(overrides: Record<string, string | number | string[]>) {
+    const current: Record<string, string> = {};
+    if (initialQ) current.q = initialQ;
+    if (initialVille) current.ville = initialVille;
+    if (initialType) current.type = initialType;
+    if (initialSecteurs.length > 0) current.secteurs = initialSecteurs.join(",");
+    if (initialTypes.length > 0) current.types = initialTypes.join(",");
+    if (initialTrustMin > 0) current.trust = String(initialTrustMin);
+    if (initialSalaireMin > 0) current.salaire = String(initialSalaireMin);
+    if (initialSort) current.tri = initialSort;
+    current.page = "1";
+
+    const merged = { ...current, ...Object.fromEntries(
+      Object.entries(overrides).map(([k, v]) => [k, Array.isArray(v) ? v.join(",") : String(v)])
+    )};
+
+    const p = new URLSearchParams();
+    for (const [k, v] of Object.entries(merged)) {
+      if (v && v !== "0") p.set(k, v);
     }
+    return `/offres${p.toString() ? `?${p.toString()}` : ""}`;
+  }
 
-    // 3. Contract type filter (from search bar)
-    if (type) {
-      results = results.filter((o) => o.raw_offers.contract_type === type);
-    }
+  function navigate(overrides: Record<string, string | number | string[]>) {
+    router.push(buildUrl(overrides));
+  }
 
-    // 4. Secteur filter
-    if (secteurs.length > 0) {
-      results = results.filter((o) =>
-        secteurs.some((s) =>
-          matchesSecteur(
-            o.raw_offers.title,
-            o.raw_offers.description,
-            s
-          )
-        )
-      );
-    }
+  function navigateDebounced(overrides: Record<string, string | number | string[]>) {
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => navigate(overrides), 400);
+  }
 
-    // 5. Contract types filter (from filter panel)
-    if (types.length > 0) {
-      results = results.filter((o) =>
-        types.includes(o.raw_offers.contract_type ?? "")
-      );
-    }
+  function handleSearchSubmit(q: string, ville: string, type: string) {
+    navigate({ q, ville, type, page: 1 });
+  }
 
-    // 6. Trust score filter
-    if (trustMin > 0) {
-      results = results.filter(
-        (o) => o.trust_score !== null && o.trust_score >= trustMin
-      );
-    }
-
-    // 7. Salaire filter
-    if (salaireMin > 0) {
-      results = results.filter(
-        (o) => o.raw_offers.salary_min !== null && o.raw_offers.salary_min >= salaireMin
-      );
-    }
-
-    // 8. Sort
-    if (sort === "trust") {
-      results.sort((a, b) => (b.trust_score ?? -1) - (a.trust_score ?? -1));
-    } else if (sort === "salaire") {
-      results.sort((a, b) => (b.raw_offers.salary_min ?? -1) - (a.raw_offers.salary_min ?? -1));
-    }
-    // default: keep original enriched_at order from server
-
-    return results;
-  }, [initialOffres, q, ville, type, secteurs, types, trustMin, salaireMin, sort]);
-
-  function handleSearchSubmit(newQ: string, newVille: string, newType: string) {
-    setQ(newQ);
-    setVille(newVille);
-    setType(newType);
-    const params = new URLSearchParams();
-    if (newQ) params.set("q", newQ);
-    if (newVille) params.set("ville", newVille);
-    if (newType) params.set("type", newType);
-    params.set("page", "1");
-    router.replace(`/offres${params.toString() ? `?${params.toString()}` : ""}`);
+  function handleSecteurToggle(slug: string) {
+    const next = initialSecteurs.includes(slug)
+      ? initialSecteurs.filter((s) => s !== slug)
+      : [...initialSecteurs, slug];
+    navigate({ secteurs: next, page: 1 });
   }
 
   function handleFiltersChange(filters: {
@@ -258,28 +194,33 @@ export function OffresPageClient({
     salaireMin: number;
     distance: number;
   }) {
-    setSecteurs(filters.secteurs);
-    setTypes(filters.types);
-    setTrustMin(filters.trustMin);
-    setSalaireMin(filters.salaireMin);
-    setDistance(filters.distance);
+    navigateDebounced({
+      secteurs: filters.secteurs,
+      types: filters.types,
+      trust: filters.trustMin || "0",
+      salaire: filters.salaireMin || "0",
+      page: 1,
+    });
   }
 
   function handleReset() {
-    setQ("");
-    setVille("");
-    setType("");
-    setSecteurs([]);
-    setTypes([]);
-    setTrustMin(0);
-    setSalaireMin(0);
-    setDistance(30);
-    setSort("");
-    router.replace("/offres");
+    router.push("/offres");
+  }
+
+  function handleSortChange(newSort: string) {
+    navigate({ tri: newSort, page: 1 });
+  }
+
+  function handlePageChange(p: number) {
+    const url = buildUrl({ page: p });
+    router.push(url);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   const hasFilters =
-    q || ville || type || secteurs.length > 0 || types.length > 0 || trustMin > 0 || salaireMin > 0;
+    initialQ || initialVille || initialType ||
+    initialSecteurs.length > 0 || initialTypes.length > 0 ||
+    initialTrustMin > 0 || initialSalaireMin > 0;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
@@ -293,31 +234,25 @@ export function OffresPageClient({
         </p>
       </div>
 
-      {/* Hero Search Bar */}
+      {/* Search Bar */}
       <SearchBar
-        defaultQ={q}
-        defaultVille={ville}
-        defaultType={type}
+        defaultQ={initialQ}
+        defaultVille={initialVille}
+        defaultType={initialType}
         onSearch={handleSearchSubmit}
       />
       <p className="text-center text-xs text-muted-foreground mt-3">
-        Offres mises à jour toutes les 3h · Vérifiées par notre IA
+        Offres mises à jour toutes les 6h · Vérifiées par notre IA
       </p>
 
       {/* Sector chips */}
       <div className="flex flex-wrap gap-2 justify-center mt-5 mb-8">
         {SECTEURS.filter((s) => s.slug !== "autre").map((s) => {
-          const active = secteurs.includes(s.slug);
+          const active = initialSecteurs.includes(s.slug);
           return (
             <button
               key={s.slug}
-              onClick={() => {
-                const next = active
-                  ? secteurs.filter((x) => x !== s.slug)
-                  : [...secteurs, s.slug];
-                setSecteurs(next);
-                handleFiltersChange({ secteurs: next, types, trustMin, salaireMin, distance });
-              }}
+              onClick={() => handleSecteurToggle(s.slug)}
               className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border transition-all ${
                 active
                   ? "bg-accent/15 border-accent/40 text-accent"
@@ -331,11 +266,10 @@ export function OffresPageClient({
         })}
       </div>
 
-      {/* Results count + mobile filter btn */}
+      {/* Results count + mobile filter btn + sort */}
       <div className="flex items-center justify-between mb-4">
         <span className="text-sm text-foreground font-medium">
-          {filteredOffres.length} offre{filteredOffres.length !== 1 ? "s" : ""} trouvée
-          {filteredOffres.length !== 1 ? "s" : ""}
+          {initialTotal} offre{initialTotal !== 1 ? "s" : ""} trouvée{initialTotal !== 1 ? "s" : ""}
         </span>
         <div className="flex items-center gap-3">
           <button
@@ -345,41 +279,38 @@ export function OffresPageClient({
             <SlidersHorizontal size={16} />
             Filtrer
           </button>
-          <SortSelect value={sort} onChange={setSort} />
+          <SortSelect value={initialSort} onChange={handleSortChange} />
         </div>
       </div>
 
       {/* Two-column layout */}
       <div className="flex gap-8">
-        {/* Left column: filters (desktop) */}
+        {/* Filtres desktop */}
         <aside className="hidden lg:block w-[280px] shrink-0">
           <FilterPanel
-            secteurs={secteurs}
-            types={types}
-            trustMin={trustMin}
-            salaireMin={salaireMin}
-            distance={distance}
+            secteurs={initialSecteurs}
+            types={initialTypes}
+            trustMin={initialTrustMin}
+            salaireMin={initialSalaireMin}
+            distance={initialDistance}
             onChange={handleFiltersChange}
             onReset={handleReset}
           />
         </aside>
 
-        {/* Right: results */}
+        {/* Résultats */}
         <main className="flex-1 min-w-0" id="main-content">
-          {filteredOffres.length === 0 && hasFilters ? (
-            <EmptyState filtered onReset={handleReset} />
+          {displayOffres.length === 0 ? (
+            <EmptyState filtered={!!hasFilters} onReset={handleReset} />
           ) : (
-            <OfferList offres={filteredOffres} />
+            <OfferList offres={displayOffres} />
           )}
 
-          {/* Pagination */}
-          {initialTotal > 20 && (
-            <Pagination
-              total={initialTotal}
-              page={initialPage}
-              onPageChange={(p) => router.push(`/offres?page=${p}`)}
-            />
-          )}
+          <Pagination
+            total={initialTotal}
+            page={initialPage}
+            onPageChange={handlePageChange}
+          />
         </main>
       </div>
 
@@ -401,13 +332,19 @@ export function OffresPageClient({
               </button>
             </div>
             <FilterPanel
-              secteurs={secteurs}
-              types={types}
-              trustMin={trustMin}
-              salaireMin={salaireMin}
-              distance={distance}
-              onChange={handleFiltersChange}
-              onReset={handleReset}
+              secteurs={initialSecteurs}
+              types={initialTypes}
+              trustMin={initialTrustMin}
+              salaireMin={initialSalaireMin}
+              distance={initialDistance}
+              onChange={(filters) => {
+                handleFiltersChange(filters);
+                setMobileFilterOpen(false);
+              }}
+              onReset={() => {
+                handleReset();
+                setMobileFilterOpen(false);
+              }}
             />
           </div>
         </div>

@@ -24,7 +24,26 @@ export default async function OffresPage({
   }
 
   const page = Math.max(1, Number(getStr("page", "1")) || 1);
-  const { offres, total } = await getOffres({ page });
+  const q = getStr("q");
+  const ville = getStr("ville");
+  const type = getStr("type");
+  const secteurs = getStr("secteurs") ? getStr("secteurs").split(",").filter(Boolean) : [];
+  const types = getStr("types") ? getStr("types").split(",").filter(Boolean) : [];
+  const trust_min = Number(getStr("trust", "0")) || 0;
+  const salaire_min = Number(getStr("salaire", "0")) || 0;
+  const sort = getStr("tri", "");
+
+  const { offres, total } = await getOffres({
+    page,
+    q,
+    ville,
+    type,
+    secteurs,
+    types,
+    trust_min,
+    salaire_min,
+    sort,
+  });
 
   return (
     <>
@@ -33,15 +52,15 @@ export default async function OffresPage({
           initialOffres={offres}
           initialTotal={total}
           initialPage={page}
-          initialQ={getStr("q")}
-          initialVille={getStr("ville")}
-          initialType={getStr("type")}
-          initialSecteurs={getStr("secteur") ? [getStr("secteur")] : []}
-          initialTypes={[]}
-          initialTrustMin={Number(getStr("trust", "0")) || 0}
-          initialSalaireMin={Number(getStr("salaire", "0")) || 0}
+          initialQ={q}
+          initialVille={ville}
+          initialType={type}
+          initialSecteurs={secteurs}
+          initialTypes={types}
+          initialTrustMin={trust_min}
+          initialSalaireMin={salaire_min}
           initialDistance={Number(getStr("distance", "30")) || 30}
-          initialSort={getStr("tri", "")}
+          initialSort={sort}
         />
       </Suspense>
       <Footer />
