@@ -22,9 +22,13 @@ export async function GET(request: Request) {
   if (enrichedIds.length > 0) {
     pendingQuery = pendingQuery.not("id", "in", `(${enrichedIds.join(",")})`);
   }
-  const { data: pending } = await pendingQuery;
+  const { data: pending, error: pendingError } = await pendingQuery;
 
-  if (!pending?.length) return NextResponse.json({ success: true, scored: 0 });
+  if (!pending?.length) return NextResponse.json({
+    success: true,
+    scored: 0,
+    debug: { enrichedCount: enrichedIds.length, pendingCount: pending?.length ?? 0, pendingError: pendingError?.message ?? null }
+  });
 
   const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://monbaito.fr";
   const headers = {
