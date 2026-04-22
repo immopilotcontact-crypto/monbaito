@@ -19,7 +19,7 @@ export async function getOffreById(
   }
 }
 
-const PER_PAGE = 20;
+const PER_PAGE = 40;
 
 function getPublicClient() {
   return createSupabase(
@@ -47,7 +47,7 @@ export async function getOffres(
     let query = supabase
       .from("enriched_offers")
       .select("*, raw_offers(*)", { count: "exact" })
-      .not("contract_type_clean", "eq", "other")
+      .in("contract_type_clean", ["student", "seasonal", "alternance", "internship"])
       .order("enriched_at", { ascending: false })
       .range(from, to);
 
