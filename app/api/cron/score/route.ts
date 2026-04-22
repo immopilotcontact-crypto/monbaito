@@ -10,12 +10,19 @@ export async function GET(request: Request) {
 
   const supabase = createServiceClient();
 
+  // Récupère les IDs déjà enrichis
+  const { data: enriched } = await supabase
+    .from("enriched_offers")
+    .select("raw_offer_id");
+
+  const enrichedIds = (enriched ?? []).map((e) => e.raw_offer_id).filter(Boolean);
+
   // Raw offers sans enrichissement
-  const { data: pending } = await supabase
-    .from("raw_offers")
-    .select("id")
-    .not("id", "in", supabase.from("enriched_offers").select("raw_offer_id"))
-    .limit(50);
+  let pendingQuery = supabase.from("raw_offers").select("id").limit(50);
+  if (enrichedIds.length > 0) {
+    pendingQuery = pendingQuery.not("id", "in", `(${enrichedIds.join(",")})`);
+  }
+  const { data: pending } = await pendingQuery;
 
   if (!pending?.length) return NextResponse.json({ success: true, scored: 0 });
 
