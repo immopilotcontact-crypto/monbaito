@@ -88,16 +88,18 @@ export async function GET(request: Request) {
 
     const seen = new Set<string>();
     const rows: Record<string, unknown>[] = [];
+    let totalJobs = 0, parseFail = 0, dupSkip = 0;
 
     for (const result of responses) {
       if (result.status !== "fulfilled") continue;
       const jobs: unknown[] = result.value?.jobs ?? [];
+      totalJobs += jobs.length;
       for (const raw of jobs) {
         const parsed = LBAJobSchema.safeParse(raw);
-        if (!parsed.success) continue;
+        if (!parsed.success) { parseFail++; continue; }
         const o = parsed.data;
         const id = o.identifier.id;
-        if (seen.has(id)) continue;
+        if (seen.has(id)) { dupSkip++; continue; }
         seen.add(id);
 
         const description = o.offer.description
@@ -146,7 +148,7 @@ export async function GET(request: Request) {
       else errors.push(error.message);
     }
 
-    return NextResponse.json({ success: true, collected: rows.length, inserted, errors: errors.slice(0, 3), cityDebug });
+    return NextResponse.json({ success: true, totalJobs, parseFail, dupSkip, collected: rows.length, inserted, errors: errors.slice(0, 3) });
   } catch (err) {
     console.error("[lba]", err);
     return NextResponse.json({ error: "Scraping failed" }, { status: 500 });
