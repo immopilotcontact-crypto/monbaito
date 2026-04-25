@@ -64,6 +64,7 @@ function parseSalary(libelle: string | undefined) {
 }
 
 const QUERIES = [
+  // Jobs étudiants (CDD temps partiel)
   "typeContrat=CDD&tempsPlein=false&motsCles=etudiant",
   "typeContrat=CDD&tempsPlein=false&motsCles=serveur",
   "typeContrat=CDD&tempsPlein=false&motsCles=caissier",
@@ -73,6 +74,9 @@ const QUERIES = [
   "typeContrat=SAI&motsCles=etudiant",
   "typeContrat=SAI",
   "typeContrat=MIS&tempsPlein=false",
+  // Alternance (apprentissage + contrat de professionnalisation)
+  "typeContrat=APP",
+  "typeContrat=PRO",
 ];
 
 export async function GET(request: Request) {

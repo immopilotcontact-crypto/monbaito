@@ -47,6 +47,8 @@ interface OffresPageClientProps {
   initialTrustMin: number;
   initialSalaireMin: number;
   initialSort: string;
+  title?: string;
+  subtitle?: string;
 }
 
 function Pagination({
@@ -127,6 +129,8 @@ export function OffresPageClient({
   initialTrustMin,
   initialSalaireMin,
   initialSort,
+  title = "Trouve ton job étudiant",
+  subtitle = "Toutes les offres sont vérifiées par notre IA — résultats rapides, sans perte de temps.",
 }: OffresPageClientProps) {
   const router = useRouter();
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
@@ -227,11 +231,9 @@ export function OffresPageClient({
       {/* Hero */}
       <div className="text-center mb-6">
         <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight mb-1">
-          Trouve ton job étudiant
+          {title}
         </h1>
-        <p className="text-sm text-muted-foreground">
-          Toutes les offres sont vérifiées par notre IA — résultats rapides, sans perte de temps.
-        </p>
+        <p className="text-sm text-muted-foreground">{subtitle}</p>
       </div>
 
       {/* Search Bar */}
@@ -241,9 +243,6 @@ export function OffresPageClient({
         defaultType={initialType}
         onSearch={handleSearchSubmit}
       />
-      <p className="text-center text-xs text-muted-foreground mt-3">
-        Offres mises à jour toutes les 6h · Vérifiées par notre IA
-      </p>
 
       {/* Sector chips */}
       <div className="flex flex-wrap gap-2 justify-center mt-5 mb-8">

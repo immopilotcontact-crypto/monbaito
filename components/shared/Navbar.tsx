@@ -12,7 +12,9 @@ export function Navbar() {
   const [ville, setVille] = useState("");
 
   const isOffresPage =
-    pathname.startsWith("/offres") || pathname.startsWith("/job-etudiant");
+    pathname.startsWith("/offres") ||
+    pathname.startsWith("/job-etudiant") ||
+    pathname.startsWith("/alternance");
 
   function handleSearchSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -74,7 +76,13 @@ export function Navbar() {
               href="/offres"
               className="font-label text-xs tracking-widest uppercase text-white/80 hover:text-white transition-colors"
             >
-              Offres
+              Jobs étudiants
+            </Link>
+            <Link
+              href="/alternance"
+              className="font-label text-xs tracking-widest uppercase text-white/80 hover:text-white transition-colors"
+            >
+              Alternance
             </Link>
             <Link
               href="/auth/login"
@@ -96,7 +104,13 @@ export function Navbar() {
               href="/offres"
               className="font-label text-[11px] font-bold tracking-widest uppercase border border-white/50 text-white px-3 py-2 hover:bg-white/10 transition-colors"
             >
-              Offres
+              Jobs
+            </Link>
+            <Link
+              href="/alternance"
+              className="font-label text-[11px] font-bold tracking-widest uppercase border border-white/50 text-white px-3 py-2 hover:bg-white/10 transition-colors"
+            >
+              Alternance
             </Link>
             <Link
               href="/auth/login"
