@@ -114,7 +114,7 @@ export async function GET(request: Request) {
       if (!error) inserted += batch.length;
     }
 
-    return NextResponse.json({ success: true, collected: rows.length, inserted });
+    return NextResponse.json({ success: true, inserted });
   } catch (err) {
     console.error("[lba]", err);
     return NextResponse.json({ error: "Scraping failed" }, { status: 500 });
