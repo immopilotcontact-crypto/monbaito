@@ -136,6 +136,7 @@ export async function GET(request: Request) {
     }
 
     let inserted = 0;
+    const errors: string[] = [];
     const supabase = createServiceClient();
     for (let i = 0; i < rows.length; i += 20) {
       const batch = rows.slice(i, i + 20);
@@ -143,9 +144,10 @@ export async function GET(request: Request) {
         .from("raw_offers")
         .upsert(batch, { onConflict: "source,source_id" });
       if (!error) inserted += batch.length;
+      else errors.push(error.message);
     }
 
-    return NextResponse.json({ success: true, inserted });
+    return NextResponse.json({ success: true, collected: rows.length, inserted, errors: errors.slice(0, 3) });
   } catch (err) {
     console.error("[lba]", err);
     return NextResponse.json({ error: "Scraping failed" }, { status: 500 });
