@@ -26,8 +26,11 @@ export async function GET(request: Request) {
     })
   );
 
-  // Après scraping, déclenche le scoring
-  await fetch(`${base}/api/cron/score`, { headers }).catch(() => {});
+  // Après scraping : scoring + nettoyage des offres expirées/supprimées
+  await Promise.all([
+    fetch(`${base}/api/cron/score`, { headers }).catch(() => {}),
+    fetch(`${base}/api/cron/cleanup`, { headers }).catch(() => {}),
+  ]);
 
   return NextResponse.json({ success: true, sources: summary });
 }

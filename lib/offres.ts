@@ -5,7 +5,7 @@ import { getSecteurBySlug } from "@/lib/secteurs";
 export const PER_PAGE = 40;
 const STUDENT_CONTRACT_TYPES = ["student", "seasonal", "alternance", "internship"];
 // Offres considérées fraîches si vues dans les 7 derniers jours
-const FRESHNESS_DAYS = 7;
+const FRESHNESS_DAYS = 2; // 48h — offres retirées de la source disparaissent au prochain cycle
 
 function getPublicClient() {
   return createSupabase(
