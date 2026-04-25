@@ -72,18 +72,17 @@ export async function GET(request: Request) {
   try {
     const now = new Date().toISOString();
 
+    const cityDebug: string[] = [];
     const responses = await Promise.allSettled(
       CITIES.map(({ lat, lng }) =>
         fetch(
-          `https://api.apprentissage.beta.gouv.fr/api/job/v1/search?` +
-            new URLSearchParams({
-              romes: ROMES,
-              latitude: String(lat),
-              longitude: String(lng),
-              radius: "50",
-            }),
+          `https://api.apprentissage.beta.gouv.fr/api/job/v1/search?romes=${ROMES}&latitude=${lat}&longitude=${lng}&radius=50`,
           { headers: { Accept: "application/json", Authorization: `Bearer ${lbaApiKey}` } }
-        ).then((r) => (r.ok ? r.json() : { jobs: [] }))
+        ).then(async (r) => {
+          const body = await r.json();
+          cityDebug.push(`${lat}:${r.status}:${body.jobs?.length ?? 0}`);
+          return r.ok ? body : { jobs: [] };
+        })
       )
     );
 
@@ -147,7 +146,7 @@ export async function GET(request: Request) {
       else errors.push(error.message);
     }
 
-    return NextResponse.json({ success: true, collected: rows.length, inserted, errors: errors.slice(0, 3) });
+    return NextResponse.json({ success: true, collected: rows.length, inserted, errors: errors.slice(0, 3), cityDebug });
   } catch (err) {
     console.error("[lba]", err);
     return NextResponse.json({ error: "Scraping failed" }, { status: 500 });
