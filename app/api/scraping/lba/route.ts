@@ -57,6 +57,11 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const lbaApiKey = process.env.LBA_API_KEY;
+  if (!lbaApiKey) {
+    return NextResponse.json({ success: true, inserted: 0, skipped: "LBA_API_KEY not configured" });
+  }
+
   try {
     const now = new Date().toISOString();
 
@@ -64,17 +69,16 @@ export async function GET(request: Request) {
     const responses = await Promise.allSettled(
       CITIES.map(({ lat, lng }) =>
         fetch(
-          `https://api.labonnealternance.apprentissage.beta.gouv.fr/api/v1/jobs/?` +
+          `https://labonnealternance.apprentissage.beta.gouv.fr/api/v3/jobs/matcha?` +
             new URLSearchParams({
               caller: "strada",
               romes: ROMES,
               latitude: String(lat),
               longitude: String(lng),
               radius: "50",
-              sources: "matcha",
             }),
-          { headers: { Accept: "application/json" } }
-        ).then((r) => (r.ok ? r.json() : { matchas: { results: [] } }))
+          { headers: { Accept: "application/json", Authorization: `Bearer ${lbaApiKey}` } }
+        ).then((r) => (r.ok ? r.json() : { results: [] }))
       )
     );
 
@@ -84,7 +88,7 @@ export async function GET(request: Request) {
 
     for (const result of responses) {
       if (result.status !== "fulfilled") continue;
-      const matchas: unknown[] = result.value?.matchas?.results ?? [];
+      const matchas: unknown[] = result.value?.results ?? result.value?.matchas?.results ?? [];
       for (const raw of matchas) {
         const parsed = LBAMatchaSchema.safeParse(raw);
         if (!parsed.success || seen.has(parsed.data.id)) continue;

@@ -41,16 +41,19 @@ const FTOfferSchema = z.object({
   entreprise: z.object({ nom: z.string().optional(), siret: z.string().optional() }).optional(),
   salaire: z.object({ libelle: z.string().optional(), commentaire: z.string().optional() }).optional(),
   typeContrat: z.string().optional(),
+  natureContrat: z.string().optional(),
   origineOffre: z.object({ urlOrigine: z.string().optional() }).optional(),
 }).passthrough();
 
-function mapContractType(t: string | undefined): string {
-  if (!t) return "other";
-  const u = t.toUpperCase();
-  if (["CDD", "MIS"].includes(u)) return "student";
-  if (u.includes("ALT") || u.includes("APP") || u.includes("PRO")) return "alternance";
-  if (u === "SAI") return "seasonal";
-  if (u === "STG") return "internship";
+function mapContractType(typeContrat: string | undefined, natureContrat: string | undefined): string {
+  const nature = (natureContrat ?? "").toLowerCase();
+  if (nature.includes("apprentissage") || nature.includes("alternance") || nature.includes("professionnalisation")) {
+    return "alternance";
+  }
+  const t = (typeContrat ?? "").toUpperCase();
+  if (["CDD", "MIS"].includes(t)) return "student";
+  if (t === "SAI") return "seasonal";
+  if (t === "STG") return "internship";
   return "other";
 }
 
@@ -75,8 +78,8 @@ const QUERIES = [
   "typeContrat=SAI",
   "typeContrat=MIS&tempsPlein=false",
   // Alternance (apprentissage + contrat de professionnalisation)
-  "typeContrat=APP",
-  "typeContrat=PRO",
+  "natureContrat=E2",
+  "natureContrat=FS",
 ];
 
 export async function GET(request: Request) {
@@ -112,6 +115,7 @@ export async function GET(request: Request) {
         seen.add(parsed.data.id);
         const o = parsed.data;
         const salary = parseSalary(o.salaire?.libelle);
+        const contractType = mapContractType(o.typeContrat, o.natureContrat);
         const description = o.description
           ? sanitizeHtml(o.description, { allowedTags: [], allowedAttributes: {} })
           : null;
@@ -129,7 +133,7 @@ export async function GET(request: Request) {
           salary_period: salary.period,
           location_city: o.lieuTravail?.libelle?.split(" - ")[1] ?? o.lieuTravail?.libelle ?? null,
           location_postal: o.lieuTravail?.codePostal ?? null,
-          contract_type: mapContractType(o.typeContrat),
+          contract_type: contractType,
           posted_at: o.dateCreation ?? null,
           raw_data: o as Record<string, unknown>,
           scraped_at: now,
