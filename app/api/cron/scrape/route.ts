@@ -12,6 +12,7 @@ export async function GET(request: Request) {
 
   const results = await Promise.allSettled([
     fetch(`${base}/api/scraping/france-travail`, { headers }),
+    fetch(`${base}/api/scraping/lba`, { headers }),
     fetch(`${base}/api/scraping/apify-sources`, { headers }),
   ]);
 

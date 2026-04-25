@@ -46,7 +46,6 @@ interface OffresPageClientProps {
   initialTypes: string[];
   initialTrustMin: number;
   initialSalaireMin: number;
-  initialDistance: number;
   initialSort: string;
 }
 
@@ -127,12 +126,11 @@ export function OffresPageClient({
   initialTypes,
   initialTrustMin,
   initialSalaireMin,
-  initialDistance,
   initialSort,
 }: OffresPageClientProps) {
   const router = useRouter();
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   // Sort côté client uniquement pour "salaire" (tri serveur = "trust")
   const displayOffres = useMemo(() => {
@@ -177,7 +175,8 @@ export function OffresPageClient({
   }
 
   function handleSearchSubmit(q: string, ville: string, type: string) {
-    navigate({ q, ville, type, page: 1 });
+    // Efface types (FilterPanel) quand on relance une recherche via la barre
+    navigate({ q, ville, type, types: [], page: 1 });
   }
 
   function handleSecteurToggle(slug: string) {
@@ -197,6 +196,7 @@ export function OffresPageClient({
     navigateDebounced({
       secteurs: filters.secteurs,
       types: filters.types,
+      type: "",  // efface le type SearchBar quand FilterPanel prend la main
       trust: filters.trustMin || "0",
       salaire: filters.salaireMin || "0",
       page: 1,
@@ -292,7 +292,6 @@ export function OffresPageClient({
             types={initialTypes}
             trustMin={initialTrustMin}
             salaireMin={initialSalaireMin}
-            distance={initialDistance}
             onChange={handleFiltersChange}
             onReset={handleReset}
           />
@@ -336,7 +335,6 @@ export function OffresPageClient({
               types={initialTypes}
               trustMin={initialTrustMin}
               salaireMin={initialSalaireMin}
-              distance={initialDistance}
               onChange={(filters) => {
                 handleFiltersChange(filters);
                 setMobileFilterOpen(false);

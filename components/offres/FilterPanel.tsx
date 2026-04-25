@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SECTEURS } from "@/lib/secteurs";
 
 const CONTRACT_TYPES = [
@@ -11,14 +11,11 @@ const CONTRACT_TYPES = [
   { value: "other", label: "Autre" },
 ];
 
-const DISTANCE_VALUES = [5, 10, 20, 30, 50];
-
 interface FilterPanelProps {
   secteurs: string[];
   types: string[];
   trustMin: number;
   salaireMin: number;
-  distance: number;
   onChange: (filters: {
     secteurs: string[];
     types: string[];
@@ -34,7 +31,6 @@ export function FilterPanel({
   types: initialTypes,
   trustMin: initialTrustMin,
   salaireMin: initialSalaireMin,
-  distance: initialDistance,
   onChange,
   onReset,
 }: FilterPanelProps) {
@@ -42,30 +38,25 @@ export function FilterPanel({
   const [types, setTypes] = useState<string[]>(initialTypes);
   const [trustMin, setTrustMin] = useState(initialTrustMin);
   const [salaireMin, setSalaireMin] = useState(initialSalaireMin);
-  // Convert distance km to range index (0-4)
-  const initialDistanceIdx = Math.max(
-    0,
-    DISTANCE_VALUES.indexOf(
-      DISTANCE_VALUES.reduce((prev, curr) =>
-        Math.abs(curr - initialDistance) < Math.abs(prev - initialDistance) ? curr : prev
-      )
-    )
-  );
-  const [distanceIdx, setDistanceIdx] = useState(initialDistanceIdx);
+
+  // Sync avec les changements de props (ex: chip secteur cliqué hors du panel)
+  useEffect(() => { setSecteurs(initialSecteurs); }, [initialSecteurs]);
+  useEffect(() => { setTypes(initialTypes); }, [initialTypes]);
+  useEffect(() => { setTrustMin(initialTrustMin); }, [initialTrustMin]);
+  useEffect(() => { setSalaireMin(initialSalaireMin); }, [initialSalaireMin]);
 
   function emitChange(
     nextSecteurs = secteurs,
     nextTypes = types,
     nextTrustMin = trustMin,
-    nextSalaireMin = salaireMin,
-    nextDistanceIdx = distanceIdx
+    nextSalaireMin = salaireMin
   ) {
     onChange({
       secteurs: nextSecteurs,
       types: nextTypes,
       trustMin: nextTrustMin,
       salaireMin: nextSalaireMin,
-      distance: DISTANCE_VALUES[nextDistanceIdx],
+      distance: 30,
     });
   }
 
@@ -95,17 +86,11 @@ export function FilterPanel({
     emitChange(undefined, undefined, undefined, val);
   }
 
-  function handleDistanceChange(idx: number) {
-    setDistanceIdx(idx);
-    emitChange(undefined, undefined, undefined, undefined, idx);
-  }
-
   function handleReset() {
     setSecteurs([]);
     setTypes([]);
     setTrustMin(0);
     setSalaireMin(0);
-    setDistanceIdx(3); // default 30km
     onReset();
   }
 
@@ -196,27 +181,6 @@ export function FilterPanel({
         <p className="text-xs text-muted-foreground mt-2">SMIC 2026 = 11,88€/h</p>
       </div>
 
-      {/* Rayon de recherche */}
-      <div>
-        <p className="text-sm font-medium text-foreground mb-3">
-          Rayon :{" "}
-          <span className="text-accent">{DISTANCE_VALUES[distanceIdx]} km</span>
-        </p>
-        <input
-          type="range"
-          min={0}
-          max={4}
-          step={1}
-          value={distanceIdx}
-          onChange={(e) => handleDistanceChange(Number(e.target.value))}
-          className="w-full accent-[hsl(354_80%_57%)]"
-        />
-        <div className="flex justify-between text-xs text-muted-foreground mt-1">
-          {DISTANCE_VALUES.map((d) => (
-            <span key={d}>{d}km</span>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }

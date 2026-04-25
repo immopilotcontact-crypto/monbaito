@@ -59,7 +59,6 @@ export default async function OffresPage({
           initialTypes={types}
           initialTrustMin={trust_min}
           initialSalaireMin={salaire_min}
-          initialDistance={Number(getStr("distance", "30")) || 30}
           initialSort={sort}
         />
       </Suspense>

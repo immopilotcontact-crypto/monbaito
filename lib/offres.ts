@@ -93,18 +93,19 @@ export async function getOffres(
     if (rawIds.length === 0) return { offres: [], total: 0 };
 
     // Étape 2 — Récupère enriched_offers filtrés sur ces IDs
-    const allowedTypes =
-      type
-        ? [type]
-        : types.length > 0
-        ? types
-        : STUDENT_CONTRACT_TYPES;
+    // types (plural, FilterPanel) prend la priorité sur type (singular, SearchBar)
+    const explicitTypes = types.length > 0 ? types : type ? [type] : [];
 
     let query = supabase
       .from("enriched_offers")
       .select("*, raw_offers(*)", { count: "exact" })
-      .in("raw_offer_id", rawIds)
-      .in("contract_type_clean", allowedTypes);
+      .in("raw_offer_id", rawIds);
+
+    // Ne filtre contract_type_clean que si l'utilisateur a choisi un type.
+    // Sans filtre, on inclut aussi les lignes NULL (offres pas encore enrichies).
+    if (explicitTypes.length > 0) {
+      query = query.in("contract_type_clean", explicitTypes);
+    }
 
     if (trust_min > 0) {
       query = query.gte("trust_score", trust_min);
