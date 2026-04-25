@@ -125,7 +125,7 @@ export async function GET(request: Request) {
           location_lng: coords ? coords[0] : null,
           contract_type: "alternance",
           posted_at: o.offer.publication?.creation ?? o.contract?.start ?? null,
-          raw_data: o as Record<string, unknown>,
+          raw_data: { id: o.identifier.id, contract: o.contract, offer_status: (o as Record<string, unknown>)?.offer_status },
           scraped_at: now,
         });
       }
@@ -137,8 +137,8 @@ export async function GET(request: Request) {
 
     let inserted = 0;
     const supabase = createServiceClient();
-    for (let i = 0; i < rows.length; i += 100) {
-      const batch = rows.slice(i, i + 100);
+    for (let i = 0; i < rows.length; i += 20) {
+      const batch = rows.slice(i, i + 20);
       const { error } = await supabase
         .from("raw_offers")
         .upsert(batch, { onConflict: "source,source_id" });
