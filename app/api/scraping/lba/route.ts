@@ -96,7 +96,7 @@ export async function GET(request: Request) {
       totalJobs += jobs.length;
       for (const raw of jobs) {
         const parsed = LBAJobSchema.safeParse(raw);
-        if (!parsed.success) { parseFail++; continue; }
+        if (!parsed.success) { parseFail++; if (parseFail === 1) errors.push("ZOD: " + JSON.stringify(parsed.error.issues[0])); continue; }
         const o = parsed.data;
         const id = o.identifier.id;
         if (seen.has(id)) { dupSkip++; continue; }
