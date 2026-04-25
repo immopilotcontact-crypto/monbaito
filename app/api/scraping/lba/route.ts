@@ -4,52 +4,19 @@ export const maxDuration = 60;
 import { NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase-server";
 import sanitizeHtml from "sanitize-html";
-import { z } from "zod";
 
 const CITIES = [
-  { lat: 48.8566, lng: 2.3522 },   // Paris
-  { lat: 45.764,  lng: 4.8357 },   // Lyon
-  { lat: 43.2965, lng: 5.3698 },   // Marseille
-  { lat: 43.6047, lng: 1.4442 },   // Toulouse
-  { lat: 44.8378, lng: -0.5792 },  // Bordeaux
-  { lat: 47.2184, lng: -1.5536 },  // Nantes
-  { lat: 50.6292, lng: 3.0573 },   // Lille
-  { lat: 48.5734, lng: 7.7521 },   // Strasbourg
+  { lat: 48.8566, lng: 2.3522 },
+  { lat: 45.764,  lng: 4.8357 },
+  { lat: 43.2965, lng: 5.3698 },
+  { lat: 43.6047, lng: 1.4442 },
+  { lat: 44.8378, lng: -0.5792 },
+  { lat: 47.2184, lng: -1.5536 },
+  { lat: 50.6292, lng: 3.0573 },
+  { lat: 48.5734, lng: 7.7521 },
 ];
 
 const ROMES = "G1803,D1506,N4105,K1302,D1507,M1607,K2112,G1802,N4101";
-
-const LBAJobSchema = z.object({
-  identifier: z.object({
-    id: z.string(),
-    partner_job_id: z.string().optional(),
-  }),
-  workplace: z.object({
-    name: z.string().optional(),
-    siret: z.string().optional(),
-    description: z.string().optional(),
-    location: z.object({
-      address: z.string().optional(),
-      geopoint: z.object({
-        coordinates: z.tuple([z.number(), z.number()]).optional(),
-      }).optional(),
-    }).optional(),
-  }).optional(),
-  apply: z.object({
-    url: z.string().optional(),
-  }).optional(),
-  offer: z.object({
-    title: z.string(),
-    description: z.string().optional(),
-    publication: z.object({
-      creation: z.string().optional(),
-    }).optional(),
-  }),
-  contract: z.object({
-    start: z.string().optional(),
-    type: z.array(z.string()).optional(),
-  }).optional(),
-}).passthrough();
 
 function parseAddress(address: string | undefined): { city: string | null; postal: string | null } {
   if (!address) return { city: null, postal: null };
@@ -72,7 +39,6 @@ export async function GET(request: Request) {
   try {
     const now = new Date().toISOString();
 
-    const cityDebug: string[] = [];
     const responses = await Promise.allSettled(
       CITIES.map(({ lat, lng }) =>
         fetch(
@@ -80,7 +46,6 @@ export async function GET(request: Request) {
           { headers: { Accept: "application/json", Authorization: `Bearer ${lbaApiKey}` } }
         ).then(async (r) => {
           const body = await r.json();
-          cityDebug.push(`${lat}:${r.status}:${body.jobs?.length ?? 0}`);
           return r.ok ? body : { jobs: [] };
         })
       )
@@ -88,33 +53,36 @@ export async function GET(request: Request) {
 
     const seen = new Set<string>();
     const rows: Record<string, unknown>[] = [];
-    let totalJobs = 0, parseFail = 0, dupSkip = 0;
 
     for (const result of responses) {
       if (result.status !== "fulfilled") continue;
-      const jobs: unknown[] = result.value?.jobs ?? [];
-      totalJobs += jobs.length;
-      for (const raw of jobs) {
-        const parsed = LBAJobSchema.safeParse(raw);
-        if (!parsed.success) { parseFail++; if (parseFail === 1) errors.push("ZOD: " + JSON.stringify(parsed.error.issues[0])); continue; }
-        const o = parsed.data;
-        const id = o.identifier.id;
-        if (seen.has(id)) { dupSkip++; continue; }
+      const jobs = result.value?.jobs;
+      if (!Array.isArray(jobs)) continue;
+
+      for (const job of jobs) {
+        if (!job || typeof job !== "object") continue;
+        const id = job?.identifier?.id;
+        if (typeof id !== "string" || !id) continue;
+        if (seen.has(id)) continue;
         seen.add(id);
 
-        const description = o.offer.description
-          ? sanitizeHtml(o.offer.description, { allowedTags: [], allowedAttributes: {} })
+        const title = job?.offer?.title;
+        if (typeof title !== "string" || !title) continue;
+
+        const description = job?.offer?.description
+          ? sanitizeHtml(String(job.offer.description), { allowedTags: [], allowedAttributes: {} })
           : null;
-        const { city, postal } = parseAddress(o.workplace?.location?.address);
-        const coords = o.workplace?.location?.geopoint?.coordinates;
+        const address = job?.workplace?.location?.address;
+        const { city, postal } = parseAddress(typeof address === "string" ? address : undefined);
+        const coords = job?.workplace?.location?.geopoint?.coordinates;
 
         rows.push({
           source: "lba",
           source_id: id,
-          url: o.apply?.url ?? null,
-          title: o.offer.title,
-          company_name: o.workplace?.name ?? null,
-          company_siren: o.workplace?.siret?.slice(0, 9) ?? null,
+          url: job?.apply?.url ?? null,
+          title,
+          company_name: job?.workplace?.name ?? null,
+          company_siren: typeof job?.workplace?.siret === "string" ? job.workplace.siret.slice(0, 9) : null,
           description,
           salary_raw: null,
           salary_min: null,
@@ -122,11 +90,11 @@ export async function GET(request: Request) {
           salary_period: null,
           location_city: city,
           location_postal: postal,
-          location_lat: coords ? coords[1] : null,
-          location_lng: coords ? coords[0] : null,
+          location_lat: Array.isArray(coords) ? coords[1] : null,
+          location_lng: Array.isArray(coords) ? coords[0] : null,
           contract_type: "alternance",
-          posted_at: o.offer.publication?.creation ?? o.contract?.start ?? null,
-          raw_data: { id: o.identifier.id, contract: o.contract, offer_status: (o as Record<string, unknown>)?.offer_status },
+          posted_at: job?.offer?.publication?.creation ?? job?.contract?.start ?? null,
+          raw_data: { id, contract_type: job?.contract?.type },
           scraped_at: now,
         });
       }
@@ -137,18 +105,16 @@ export async function GET(request: Request) {
     }
 
     let inserted = 0;
-    const errors: string[] = [];
     const supabase = createServiceClient();
-    for (let i = 0; i < rows.length; i += 20) {
-      const batch = rows.slice(i, i + 20);
+    for (let i = 0; i < rows.length; i += 50) {
+      const batch = rows.slice(i, i + 50);
       const { error } = await supabase
         .from("raw_offers")
         .upsert(batch, { onConflict: "source,source_id" });
       if (!error) inserted += batch.length;
-      else errors.push(error.message);
     }
 
-    return NextResponse.json({ success: true, totalJobs, parseFail, dupSkip, collected: rows.length, inserted, errors: errors.slice(0, 3) });
+    return NextResponse.json({ success: true, collected: rows.length, inserted });
   } catch (err) {
     console.error("[lba]", err);
     return NextResponse.json({ error: "Scraping failed" }, { status: 500 });
