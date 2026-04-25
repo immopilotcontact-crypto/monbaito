@@ -14,26 +14,19 @@ export async function GET(request: Request) {
 
   const supabase = createServiceClient();
 
-  // Récupère les IDs déjà enrichis
-  const { data: enriched } = await supabase
-    .from("enriched_offers")
-    .select("raw_offer_id");
-
-  const enrichedIds = (enriched ?? []).map((e) => e.raw_offer_id).filter(Boolean);
-
-  // Raw offers sans enrichissement
-  let pendingQuery = supabase.from("raw_offers").select("*").limit(100);
-  if (enrichedIds.length > 0) {
-    pendingQuery = pendingQuery.not("id", "in", `(${enrichedIds.join(",")})`);
-  }
-  const { data: pending, error: pendingError } = await pendingQuery;
+  // Trouve les raw_offers sans enriched_offer via LEFT JOIN
+  const { data: pending, error: pendingError } = await supabase
+    .from("raw_offers")
+    .select("*, enriched_offers!left(raw_offer_id)")
+    .is("enriched_offers.raw_offer_id", null)
+    .limit(100);
 
   if (pendingError) {
     return NextResponse.json({ error: pendingError.message }, { status: 500 });
   }
 
   if (!pending?.length) {
-    return NextResponse.json({ success: true, scored: 0, enrichedTotal: enrichedIds.length });
+    return NextResponse.json({ success: true, scored: 0 });
   }
 
   // Insertion directe dans enriched_offers sans appel IA
