@@ -17,11 +17,10 @@ const AVATAR_COLORS = [
   "bg-pink-100 text-pink-700 dark:bg-pink-900/40 dark:text-pink-300",
 ];
 
-function CompanyAvatar({ name }: { name: string | null }) {
-  const initials = name
-    ? name.trim().split(/\s+/).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? "").join("")
-    : "?";
-  const hash = name ? [...name].reduce((acc, c) => acc + c.charCodeAt(0), 0) : 0;
+function CompanyAvatar({ name, fallback }: { name: string | null; fallback: string }) {
+  const source = name?.trim() || fallback.trim();
+  const initials = source.split(/\s+/).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? "").join("");
+  const hash = [...source].reduce((acc, c) => acc + c.charCodeAt(0), 0);
   const colorClass = AVATAR_COLORS[hash % AVATAR_COLORS.length];
   return (
     <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 font-black text-sm ${colorClass}`}>
@@ -81,7 +80,7 @@ export function OfferCard({ offer }: OfferCardProps) {
     <article className="bg-card border border-border/50 rounded-xl p-5 hover:-translate-y-px hover:shadow-lg transition-all duration-150 flex flex-col gap-3">
       {/* Header */}
       <div className="flex items-start gap-3">
-        <CompanyAvatar name={raw.company_name} />
+        <CompanyAvatar name={raw.company_name} fallback={raw.title} />
         <div className="min-w-0 flex-1">
           <h2 className="font-bold text-base text-foreground line-clamp-2 leading-snug">
             {raw.title}
