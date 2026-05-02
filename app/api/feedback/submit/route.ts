@@ -11,7 +11,11 @@ const BodySchema = z.object({
   actualHourlyRate: z.number().min(0).max(200).optional(),
   managerQuality: z.number().int().min(1).max(5).optional(),
   wouldRecommend: z.boolean().optional(),
-  notes: z.string().max(500).optional(),
+  notes: z
+    .string()
+    .max(500)
+    .transform((s) => s.replace(/[<>"'&]/g, ""))
+    .optional(),
 });
 
 export async function POST(request: Request) {
@@ -39,6 +43,6 @@ export async function POST(request: Request) {
     notes: parsed.data.notes ?? null,
   });
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Erreur lors de l'enregistrement" }, { status: 500 });
   return NextResponse.json({ success: true });
 }

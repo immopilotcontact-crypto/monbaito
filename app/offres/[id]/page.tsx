@@ -16,9 +16,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const offre = await getOffreById(id);
   if (!offre) return { title: "Offre introuvable" };
+  const raw = offre.raw_offers;
+  const title = `${raw.title}${raw.company_name ? ` — ${raw.company_name}` : ""}`;
+  const cityPart = raw.location_city ? ` à ${raw.location_city}` : "";
+  const description =
+    raw.description?.slice(0, 155) ??
+    `Offre ${raw.contract_type === "alternance" ? "d'alternance" : "de job étudiant"}${cityPart} chez ${raw.company_name ?? "une entreprise"}. Candidature en 1 clic sur MonBaito.`;
   return {
-    title: `${offre.raw_offers.title}${offre.raw_offers.company_name ? ` — ${offre.raw_offers.company_name}` : ""}`,
-    description: offre.raw_offers.description?.slice(0, 160) ?? undefined,
+    title,
+    description,
+    alternates: { canonical: `/offres/${id}` },
+    openGraph: {
+      title,
+      description,
+      url: `/offres/${id}`,
+      type: "website",
+    },
   };
 }
 
@@ -52,6 +65,14 @@ function relativeTime(dateStr: string | null): string {
   return `Il y a ${Math.floor(days / 30)} mois`;
 }
 
+const EMPLOYMENT_TYPE: Record<string, string> = {
+  student: "PART_TIME",
+  alternance: "FULL_TIME",
+  internship: "INTERN",
+  seasonal: "TEMPORARY",
+  other: "OTHER",
+};
+
 export default async function OffrePage({ params }: Props) {
   const { id } = await params;
   const offre = await getOffreById(id);
@@ -62,9 +83,52 @@ export default async function OffrePage({ params }: Props) {
   const salary = formatSalary(raw.salary_min, raw.salary_max, raw.salary_period);
   const contract = raw.contract_type ? CONTRACT_LABELS[raw.contract_type] : null;
   const salaryRaw = raw.salary_raw;
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://monbaito.fr";
+
+  const jobPostingJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "JobPosting",
+    title: raw.title,
+    description: raw.description ?? raw.title,
+    datePosted: raw.posted_at ?? raw.scraped_at,
+    validThrough: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+    employmentType: EMPLOYMENT_TYPE[raw.contract_type ?? "other"] ?? "OTHER",
+    url: `${baseUrl}/offres/${id}`,
+    ...(raw.company_name && {
+      hiringOrganization: {
+        "@type": "Organization",
+        name: raw.company_name,
+        ...(raw.company_siren && { identifier: raw.company_siren }),
+      },
+    }),
+    jobLocation: {
+      "@type": "Place",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: raw.location_city ?? "France",
+        postalCode: raw.location_postal ?? undefined,
+        addressCountry: "FR",
+      },
+    },
+    ...(raw.salary_min && {
+      baseSalary: {
+        "@type": "MonetaryAmount",
+        currency: "EUR",
+        value: {
+          "@type": "QuantitativeValue",
+          value: raw.salary_min,
+          unitText: raw.salary_period === "hour" ? "HOUR" : raw.salary_period === "month" ? "MONTH" : "YEAR",
+        },
+      },
+    }),
+  };
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jobPostingJsonLd) }}
+      />
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
         {/* Back link */}
         <Link

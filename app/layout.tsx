@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Fraunces, Space_Grotesk } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { NavigationBar } from "@/components/shared/NavigationBar";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const inter = Inter({
@@ -37,6 +38,9 @@ export const metadata: Metadata = {
   description:
     "MonBaito est l'agent IA qui scanne les offres d'emploi étudiantes et t'aide à postuler plus vite et mieux. Rejoins la beta gratuite.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://monbaito.fr"),
+  verification: {
+    google: "E_dqNcER-Z5d4yxO26q1yGahDQtNTJrmIWafED95jJE",
+  },
   openGraph: {
     title: "MonBaito — L'IA qui trouve ton job étudiant",
     description:
@@ -135,6 +139,7 @@ export default function RootLayout({
             },
           }}
         />
+        <Analytics />
       </body>
     </html>
   );

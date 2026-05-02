@@ -6,7 +6,14 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: "/api/",
+        disallow: [
+          "/api/",
+          "/dashboard",
+          "/profil",
+          "/candidatures",
+          "/settings",
+          "/onboarding",
+        ],
       },
     ],
     sitemap: "https://monbaito.fr/sitemap.xml",

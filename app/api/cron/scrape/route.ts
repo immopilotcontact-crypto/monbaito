@@ -1,3 +1,5 @@
+export const maxDuration = 300;
+
 import { NextResponse } from "next/server";
 
 // Orchestrateur : appelle toutes les sources de scraping en parallèle
@@ -26,11 +28,16 @@ export async function GET(request: Request) {
     })
   );
 
-  // Après scraping : scoring + nettoyage des offres expirées/supprimées
+  // Phase 2 — création des stubs enriched_offers + nettoyage
   await Promise.all([
     fetch(`${base}/api/cron/score`, { headers }).catch(() => {}),
     fetch(`${base}/api/cron/cleanup`, { headers }).catch(() => {}),
   ]);
 
-  return NextResponse.json({ success: true, sources: summary });
+  // Phase 3 — scoring IA réel (SIRENE + Claude Haiku + embedding) sur les stubs
+  const enrichResult = await fetch(`${base}/api/cron/enrich`, { headers })
+    .then((r) => r.json().catch(() => ({})))
+    .catch(() => ({}));
+
+  return NextResponse.json({ success: true, sources: summary, enrich: enrichResult });
 }

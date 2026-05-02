@@ -5,9 +5,9 @@ import { motion, useReducedMotion } from "framer-motion";
 const steps = [
   {
     number: "01",
-    title: "Vous configurez votre profil en 2 minutes.",
+    title: "Tu configures ton profil en 2 minutes.",
     description:
-      "Niveau d'études, ville, disponibilités, secteur souhaité, type de contrat. Plus votre profil est précis, plus les suggestions de l'IA sont pertinentes.",
+      "Niveau d'études, ville, disponibilités, secteur souhaité, type de contrat. Plus ton profil est précis, plus les suggestions de l'IA sont pertinentes.",
   },
   {
     number: "02",
@@ -17,15 +17,15 @@ const steps = [
   },
   {
     number: "03",
-    title: "Seules les offres qui vous correspondent remontent.",
+    title: "Seules les offres qui te correspondent remontent.",
     description:
-      "Notre algorithme de matching analyse chaque annonce et la compare à votre profil. Vous ne voyez que ce qui vous est vraiment adapté — ni trop large, ni hors sujet.",
+      "Notre algorithme de matching analyse chaque annonce et la compare à ton profil. Tu ne vois que ce qui t'est vraiment adapté — ni trop large, ni hors sujet.",
   },
   {
     number: "04",
-    title: "Vous postulez en un clic, ou on le fait pour vous.",
+    title: "Tu postules en un clic, ou on le fait pour toi.",
     description:
-      "L'IA rédige une lettre de motivation personnalisée à partir de votre CV et de l'offre. Vous relisez, ajustez si vous le souhaitez, et envoyez — ou laissez MonBaito postuler à votre place lorsque c'est possible.",
+      "L'IA rédige une lettre de motivation personnalisée à partir de ton CV et de l'offre. Tu relis, ajustes si tu le souhaites, et envoies — ou laisse MonBaito postuler à ta place lorsque c'est possible.",
   },
 ];
 

@@ -20,11 +20,21 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Fichier PDF requis" }, { status: 400 });
   }
 
-  if (file.size > 5 * 1024 * 1024) {
-    return NextResponse.json({ error: "Fichier trop volumineux (max 5 Mo)" }, { status: 400 });
+  if (file.type && file.type !== "application/pdf") {
+    return NextResponse.json({ error: "Le fichier doit être un PDF" }, { status: 400 });
+  }
+
+  if (file.size > 2 * 1024 * 1024) {
+    return NextResponse.json({ error: "Fichier trop volumineux (max 2 Mo)" }, { status: 400 });
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());
+
+  // Valider la signature magic bytes PDF (%PDF)
+  if (buffer.length < 4 || buffer.slice(0, 4).toString("ascii") !== "%PDF") {
+    return NextResponse.json({ error: "Le fichier doit être un PDF valide" }, { status: 400 });
+  }
+
   const parsed = await pdfParse(buffer);
   const text = parsed.text.slice(0, 10000).trim();
 

@@ -14,6 +14,9 @@ function getPublicClient() {
   );
 }
 
+// Sentinel envoyé par le client pour "afficher tous les types sans exception"
+export const ALL_TYPES_SENTINEL = "all";
+
 export interface GetOffresOptions {
   page?: number;
   q?: string;
@@ -46,29 +49,45 @@ export async function getOffres(
       sort = "",
     } = opts;
 
-    // Étape 1 — Récupère les IDs de raw_offers correspondant aux filtres + fraîcheur
     const freshnessCutoff = new Date(
       Date.now() - FRESHNESS_DAYS * 24 * 60 * 60 * 1000
     ).toISOString();
 
-    let rawQuery = supabase
-      .from("raw_offers")
-      .select("id")
-      .in("contract_type", STUDENT_CONTRACT_TYPES)
-      .gte("scraped_at", freshnessCutoff);
+    // "all" = sentinelle "tout voir", on ignore le filtre type dans ce cas
+    const isShowAll = types.includes(ALL_TYPES_SENTINEL) || type === ALL_TYPES_SENTINEL;
+    const rawExplicit = types.filter((t) => t !== ALL_TYPES_SENTINEL);
+    const explicitTypes = rawExplicit.length > 0 ? rawExplicit : type && type !== ALL_TYPES_SENTINEL ? [type] : [];
+
+    // Par défaut (aucun filtre type choisi) : jobs courts en premier plan
+    // L'utilisateur doit cliquer "Tout voir" ou "Alternance" pour voir les autres
+    const effectiveTypes = isShowAll
+      ? []
+      : explicitTypes.length > 0
+      ? explicitTypes
+      : ["student", "seasonal"];
+
+    // Requête unique : enriched_offers ⟶ raw_offers (INNER JOIN)
+    // Évite le pattern en 2 étapes qui génère une URL trop longue avec de nombreux IDs
+    let query = supabase
+      .from("enriched_offers")
+      .select("*, raw_offers!inner(*)", { count: "exact" })
+      .filter("raw_offers.contract_type", "in", `(${STUDENT_CONTRACT_TYPES.join(",")})`)
+      .filter("raw_offers.scraped_at", "gte", freshnessCutoff);
 
     if (q.trim()) {
-      rawQuery = rawQuery.or(
-        `title.ilike.%${q.trim()}%,company_name.ilike.%${q.trim()}%,description.ilike.%${q.trim()}%`
+      const term = q.trim();
+      query = query.or(
+        `title.ilike.%${term}%,company_name.ilike.%${term}%`,
+        { referencedTable: "raw_offers" }
       );
     }
 
     if (ville.trim()) {
-      rawQuery = rawQuery.ilike("location_city", `%${ville.trim()}%`);
+      query = query.filter("raw_offers.location_city", "ilike", `%${ville.trim()}%`);
     }
 
     if (salaire_min > 0) {
-      rawQuery = rawQuery.gte("salary_min", salaire_min);
+      query = query.filter("raw_offers.salary_min", "gte", salaire_min);
     }
 
     if (secteurs.length > 0) {
@@ -77,34 +96,12 @@ export async function getOffres(
         .slice(0, 25);
       if (keywords.length > 0) {
         const orFilter = keywords.map((kw) => `title.ilike.%${kw}%`).join(",");
-        rawQuery = rawQuery.or(orFilter);
+        query = query.or(orFilter, { referencedTable: "raw_offers" });
       }
     }
 
-    const { data: rawData, error: rawError } = await rawQuery;
-
-    if (rawError) {
-      console.error("[getOffres] raw_offers error:", rawError.message);
-      return { offres: [], total: 0 };
-    }
-
-    const rawIds = (rawData ?? []).map((r) => r.id);
-
-    if (rawIds.length === 0) return { offres: [], total: 0 };
-
-    // Étape 2 — Récupère enriched_offers filtrés sur ces IDs
-    // types (plural, FilterPanel) prend la priorité sur type (singular, SearchBar)
-    const explicitTypes = types.length > 0 ? types : type ? [type] : [];
-
-    let query = supabase
-      .from("enriched_offers")
-      .select("*, raw_offers(*)", { count: "exact" })
-      .in("raw_offer_id", rawIds);
-
-    // Ne filtre contract_type_clean que si l'utilisateur a choisi un type.
-    // Sans filtre, on inclut aussi les lignes NULL (offres pas encore enrichies).
-    if (explicitTypes.length > 0) {
-      query = query.in("contract_type_clean", explicitTypes);
+    if (effectiveTypes.length > 0) {
+      query = query.in("contract_type_clean", effectiveTypes);
     }
 
     if (trust_min > 0) {
@@ -122,7 +119,7 @@ export async function getOffres(
     const { data, error, count } = await query;
 
     if (error) {
-      console.error("[getOffres] enriched_offers error:", error.message);
+      console.error("[getOffres] error:", error.message);
       return { offres: [], total: 0 };
     }
 

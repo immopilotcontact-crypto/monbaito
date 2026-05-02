@@ -12,7 +12,10 @@ export async function DELETE() {
   // La cascade DELETE sur auth.users supprime toutes les données liées (via FK cascade)
   const service = createServiceClient();
   const { error } = await service.auth.admin.deleteUser(uid);
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error("[user/delete]", error.message);
+    return NextResponse.json({ error: "Échec de la suppression du compte" }, { status: 500 });
+  }
 
   await supabase.auth.signOut();
   return NextResponse.json({ success: true });

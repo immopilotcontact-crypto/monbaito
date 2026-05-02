@@ -10,11 +10,30 @@ import {
 } from "lucide-react";
 import type { EnrichedOfferWithRaw } from "@/types/database";
 import { SECTEURS } from "@/lib/secteurs";
+import { ALL_TYPES_SENTINEL } from "@/lib/offres";
 import { SearchBar } from "./SearchBar";
 import { SortSelect } from "./SortSelect";
 import { FilterPanel } from "./FilterPanel";
 import { OfferList } from "./OfferList";
 import { EmptyState } from "./EmptyState";
+
+const CONTRACT_TABS: { id: string; label: string; types: string[] }[] = [
+  { id: "jobs-courts", label: "Jobs courts", types: ["student", "seasonal"] },
+  { id: "alternance",  label: "Alternance",  types: ["alternance"] },
+  { id: "stage",       label: "Stage",       types: ["internship"] },
+  { id: "tout",        label: "Tout voir",   types: [ALL_TYPES_SENTINEL] },
+];
+
+function resolveActiveTab(types: string[]): string {
+  if (types.includes(ALL_TYPES_SENTINEL)) return "tout";
+  const sorted = [...types].sort().join(",");
+  if (sorted === "seasonal,student" || sorted === "student" || sorted === "seasonal") return "jobs-courts";
+  if (sorted === "alternance") return "alternance";
+  if (sorted === "internship") return "stage";
+  // Aucun filtre = défaut jobs courts
+  if (types.length === 0) return "jobs-courts";
+  return ""; // filtre personnalisé
+}
 
 const SECTEUR_ICONS: Record<string, LucideIcon> = {
   restauration: UtensilsCrossed,
@@ -244,8 +263,29 @@ export function OffresPageClient({
         onSearch={handleSearchSubmit}
       />
 
+      {/* Contract type tabs */}
+      <div className="flex items-center justify-center gap-2 mt-5 flex-wrap">
+        {CONTRACT_TABS.map((tab) => {
+          const active = resolveActiveTab(initialTypes) === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => navigate({ types: tab.types, type: "", page: 1 })}
+              className={`text-sm font-semibold px-4 py-1.5 border transition-all ${
+                active
+                  ? "border-foreground text-foreground bg-foreground/5"
+                  : "border-border/50 text-muted-foreground hover:text-foreground hover:border-border"
+              }`}
+              style={{ fontFamily: "var(--font-label)" }}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
+
       {/* Sector chips */}
-      <div className="flex flex-wrap gap-2 justify-center mt-5 mb-8">
+      <div className="flex flex-wrap gap-2 justify-center mt-4 mb-8">
         {SECTEURS.filter((s) => s.slug !== "autre").map((s) => {
           const active = initialSecteurs.includes(s.slug);
           return (

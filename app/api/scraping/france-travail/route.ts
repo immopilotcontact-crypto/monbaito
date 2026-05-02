@@ -46,8 +46,12 @@ const FTOfferSchema = z.object({
 }).passthrough();
 
 function mapContractType(typeContrat: string | undefined, natureContrat: string | undefined): string {
+  const nc = (natureContrat ?? "").toUpperCase();
   const nature = (natureContrat ?? "").toLowerCase();
-  if (nature.includes("apprentissage") || nature.includes("alternance") || nature.includes("professionnalisation")) {
+  // L'API France Travail renvoie des codes (E2 = apprentissage, FS = professionnalisation)
+  // mais peut aussi renvoyer des libellés selon le contexte
+  if (["E2", "FS"].includes(nc) ||
+      nature.includes("apprentissage") || nature.includes("alternance") || nature.includes("professionnalisation")) {
     return "alternance";
   }
   const t = (typeContrat ?? "").toUpperCase();
@@ -55,6 +59,17 @@ function mapContractType(typeContrat: string | undefined, natureContrat: string 
   if (t === "SAI") return "seasonal";
   if (t === "STG") return "internship";
   return "other";
+}
+
+function extractCity(libelle: string | undefined): string | null {
+  if (!libelle) return null;
+  // "75 - PARIS" ou "75056 - Paris" → "Paris"
+  const dashMatch = libelle.match(/^\d+\s*-\s*(.+)$/);
+  if (dashMatch) return dashMatch[1].trim();
+  // "PARIS (75)" → "PARIS"
+  const parenMatch = libelle.match(/^(.+?)\s*\(\d+\)$/);
+  if (parenMatch) return parenMatch[1].trim();
+  return libelle.trim();
 }
 
 function parseSalary(libelle: string | undefined) {
@@ -66,18 +81,31 @@ function parseSalary(libelle: string | undefined) {
   return { min: null, max: null, period: null };
 }
 
+// ROME codes ciblés sur les jobs étudiants classiques (CDD temps partiel)
+// G1803 restauration rapide, G1802 service salle, G1801 cuisine
+// D1507 mise en rayon/caisse, D1506 vente
+// N4105 livraison, K1302 garde enfants/soutien, K2112 animation
+// K2204 nettoyage/entretien, N1105 manutention/logistique
+const STUDENT_ROMES = [
+  "G1803", "G1802", "G1801",
+  "D1507", "D1506",
+  "N4105",
+  "K1302", "K2112",
+  "K2204", "N1105",
+];
+
 const QUERIES = [
-  // Jobs étudiants (CDD temps partiel)
-  "typeContrat=CDD&tempsPlein=false&motsCles=etudiant",
-  "typeContrat=CDD&tempsPlein=false&motsCles=serveur",
-  "typeContrat=CDD&tempsPlein=false&motsCles=caissier",
-  "typeContrat=CDD&tempsPlein=false&motsCles=livreur",
-  "typeContrat=CDD&tempsPlein=false&motsCles=baby-sitter",
-  "typeContrat=CDD&tempsPlein=false&motsCles=vendeur",
-  "typeContrat=SAI&motsCles=etudiant",
+  // CDD temps partiel par code ROME (jobs courts étudiants)
+  ...STUDENT_ROMES.map((r) => `typeContrat=CDD&tempsPlein=false&codeROME=${r}`),
+  // Intérim temps partiel (agences d'intérim) — restauration, caisse, logistique
+  "typeContrat=MIS&tempsPlein=false&codeROME=G1803",
+  "typeContrat=MIS&tempsPlein=false&codeROME=D1507",
+  "typeContrat=MIS&tempsPlein=false&codeROME=N1105",
+  // Saisonniers (été / Noël) — non filtrés par ROME pour couvrir large
   "typeContrat=SAI",
-  "typeContrat=MIS&tempsPlein=false",
-  // Alternance (apprentissage + contrat de professionnalisation)
+  "typeContrat=SAI&codeROME=G1803",
+  "typeContrat=SAI&codeROME=G1802",
+  // Alternance — on garde les 2 requêtes officielles sans les élargir
   "natureContrat=E2",
   "natureContrat=FS",
 ];
@@ -131,7 +159,7 @@ export async function GET(request: Request) {
           salary_min: salary.min,
           salary_max: salary.max,
           salary_period: salary.period,
-          location_city: o.lieuTravail?.libelle?.split(" - ")[1] ?? o.lieuTravail?.libelle ?? null,
+          location_city: extractCity(o.lieuTravail?.libelle),
           location_postal: o.lieuTravail?.codePostal ?? null,
           contract_type: contractType,
           posted_at: o.dateCreation ?? null,
@@ -145,15 +173,31 @@ export async function GET(request: Request) {
       return NextResponse.json({ success: true, inserted: 0 });
     }
 
-    // Upsert groupé en lots de 100
+    // Upsert groupé en lots de 100 + création immédiate des enriched_offers
     let inserted = 0;
     const supabase = createServiceClient();
     for (let i = 0; i < rows.length; i += 100) {
       const batch = rows.slice(i, i + 100);
-      const { error } = await supabase
+      const { data: upserted, error } = await supabase
         .from("raw_offers")
-        .upsert(batch, { onConflict: "source,source_id" });
-      if (!error) inserted += batch.length;
+        .upsert(batch, { onConflict: "source,source_id" })
+        .select("id, contract_type");
+      if (!error && upserted) {
+        inserted += upserted.length;
+        const enrichedRows = upserted.map((r) => ({
+          raw_offer_id: r.id,
+          trust_score: 50,
+          trust_reasons: ["Offre importée — scoring IA en attente"],
+          company_verified: false,
+          sirene_data: null,
+          description_embedding: null,
+          is_scam_likely: false,
+          contract_type_clean: r.contract_type,
+        }));
+        await supabase
+          .from("enriched_offers")
+          .upsert(enrichedRows, { onConflict: "raw_offer_id", ignoreDuplicates: true });
+      }
     }
 
     return NextResponse.json({ success: true, inserted });

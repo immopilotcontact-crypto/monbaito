@@ -28,7 +28,9 @@ export default async function OffresPage({
   const ville = getStr("ville");
   const type = getStr("type");
   const secteurs = getStr("secteurs") ? getStr("secteurs").split(",").filter(Boolean) : [];
-  const types = getStr("types") ? getStr("types").split(",").filter(Boolean) : [];
+  // "all" = sentinelle "Tout voir" — on la laisse passer telle quelle à getOffres
+  const rawTypes = getStr("types");
+  const types = rawTypes ? rawTypes.split(",").filter(Boolean) : [];
   const trust_min = Number(getStr("trust", "0")) || 0;
   const salaire_min = Number(getStr("salaire", "0")) || 0;
   const sort = getStr("tri", "");

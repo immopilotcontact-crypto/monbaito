@@ -11,9 +11,9 @@ import { ShieldCheck, Zap, Eye, EyeOff } from "lucide-react";
 import { Loader2 } from "lucide-react";
 
 const TRUST_POINTS = [
-  { icon: Zap, label: "Matching IA selon votre profil" },
+  { icon: Zap, label: "Matching IA selon ton profil" },
   { icon: ShieldCheck, label: "Candidature en 1 clic ou automatique" },
-  { icon: ShieldCheck, label: "Vos données ne sont jamais revendues" },
+  { icon: ShieldCheck, label: "Tes données ne sont jamais revendues" },
 ];
 
 function LoginForm() {
@@ -132,9 +132,9 @@ function LoginForm() {
           Pourquoi MonBaito ?
         </p>
         <h2 className="text-4xl font-black uppercase tracking-tighter text-foreground mb-8 leading-tight">
-          Votre job étudiant,
+          Ton job étudiant,
           <br />
-          trouvé pour vous.
+          trouvé pour toi.
         </h2>
         <div className="space-y-4">
           {TRUST_POINTS.map(({ icon: Icon, label }) => (

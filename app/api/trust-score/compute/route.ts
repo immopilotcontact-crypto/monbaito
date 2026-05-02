@@ -64,7 +64,10 @@ export async function POST(request: Request) {
     { onConflict: "raw_offer_id" }
   );
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error("[trust-score/compute] upsert:", error.message);
+    return NextResponse.json({ error: "Erreur interne" }, { status: 500 });
+  }
 
   return NextResponse.json({ success: true, score: result.score, scam: result.isScamLikely });
 }

@@ -18,7 +18,7 @@ export function Footer() {
               />
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed mb-5">
-              La plateforme IA qui trouve votre job étudiant et postule à votre place.
+              La plateforme IA qui trouve ton job étudiant et postule à ta place.
             </p>
             {/* Social icons */}
             <div className="flex items-center gap-3">

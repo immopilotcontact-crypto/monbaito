@@ -116,7 +116,7 @@ export function RatingWidget({ offerId }: { offerId: string }) {
     } else {
       const err = await res.json();
       if (err.error?.includes("Unauthorized")) {
-        toast.error("Connectez-vous pour noter cette annonce.");
+        toast.error("Connecte-toi pour noter cette annonce.");
       } else {
         toast.error("Erreur lors de l'enregistrement.");
       }
@@ -165,7 +165,7 @@ export function RatingWidget({ offerId }: { offerId: string }) {
         </div>
       ) : (
         <p className="text-xs text-muted-foreground" style={{ fontFamily: "var(--font-label)" }}>
-          Aucun avis pour l&apos;instant. Soyez le premier à noter.
+          Aucun avis pour l&apos;instant. Sois le premier à noter.
         </p>
       )}
 
@@ -181,7 +181,7 @@ export function RatingWidget({ offerId }: { offerId: string }) {
       ) : (
         <div className="space-y-3 bg-muted/40 p-4 border border-border">
           <p className="text-[10px] font-bold uppercase tracking-widest text-accent" style={{ fontFamily: "var(--font-label)" }}>
-            Votre avis (optionnel)
+            Ton avis (optionnel)
           </p>
           {CRITERIA.map(({ key, label }) => (
             <div key={key} className="flex items-center justify-between gap-4">

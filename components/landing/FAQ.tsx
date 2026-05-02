@@ -11,12 +11,12 @@ const faqs = [
   {
     question: "Qu'est-ce que MonBaito, concrètement ?",
     answer:
-      "MonBaito est une plateforme conçue pour les étudiants, par un étudiant. Notre IA analyse votre profil — niveau d'études, disponibilités, secteur souhaité — et sélectionne pour vous les offres les plus pertinentes parmi des dizaines de sources. Elle peut également postuler à votre place lorsque c'est possible, pour vous faire gagner un maximum de temps.",
+      "MonBaito est une plateforme conçue pour les étudiants, par un étudiant. Notre IA analyse ton profil — niveau d'études, disponibilités, secteur souhaité — et sélectionne pour toi les offres les plus pertinentes parmi des dizaines de sources. Elle peut également postuler à ta place lorsque c'est possible, pour te faire gagner un maximum de temps.",
   },
   {
     question: "Comment fonctionne la personnalisation ?",
     answer:
-      "Lors de la configuration de votre profil, vous renseignez vos préférences : secteur, ville, type de contrat, disponibilités et critères personnels. Notre IA utilise ces informations pour vous proposer uniquement les offres qui correspondent vraiment à votre situation, et non une liste générique.",
+      "Lors de la configuration de ton profil, tu renseignes tes préférences : secteur, ville, type de contrat, disponibilités et critères personnels. Notre IA utilise ces informations pour te proposer uniquement les offres qui correspondent vraiment à ta situation, et non une liste générique.",
   },
   {
     question: "C'est quoi les groupes d'entraide ?",
@@ -26,7 +26,7 @@ const faqs = [
   {
     question: "Que faites-vous de mes données ?",
     answer:
-      "Vos données sont utilisées exclusivement pour vous fournir le service. Elles ne sont ni revendues, ni partagées avec des tiers, ni utilisées pour entraîner des modèles d'IA externes. Vous pouvez supprimer votre compte et l'intégralité de vos informations à tout moment, depuis votre espace personnel. Nous appliquons le RGPD à la lettre.",
+      "Tes données sont utilisées exclusivement pour te fournir le service. Elles ne sont ni revendues, ni partagées avec des tiers, ni utilisées pour entraîner des modèles d'IA externes. Tu peux supprimer ton compte et l'intégralité de tes informations à tout moment, depuis ton espace personnel. Nous appliquons le RGPD à la lettre.",
   },
   {
     question: "Qui est derrière MonBaito ?",
@@ -36,7 +36,7 @@ const faqs = [
   {
     question: "Quand la beta est-elle disponible ?",
     answer:
-      "La beta privée ouvre en mai 2026 pour les 100 premiers inscrits. L'accès est entièrement gratuit. En vous inscrivant dès maintenant, vous êtes prioritaire sur les places disponibles et vous contribuez directement à façonner le produit.",
+      "La beta privée ouvre en mai 2026 pour les 100 premiers inscrits. L'accès est entièrement gratuit. En t'inscrivant dès maintenant, tu es prioritaire sur les places disponibles et tu contribues directement à façonner le produit.",
   },
 ];
 

@@ -22,7 +22,8 @@ export async function GET(request: Request) {
     .limit(100);
 
   if (pendingError) {
-    return NextResponse.json({ error: pendingError.message }, { status: 500 });
+    console.error("[cron/score] fetch pending:", pendingError.message);
+    return NextResponse.json({ error: "Erreur interne" }, { status: 500 });
   }
 
   if (!pending?.length) {
@@ -46,7 +47,8 @@ export async function GET(request: Request) {
     .upsert(rows, { onConflict: "raw_offer_id" });
 
   if (insertError) {
-    return NextResponse.json({ error: insertError.message }, { status: 500 });
+    console.error("[cron/score] upsert enriched:", insertError.message);
+    return NextResponse.json({ error: "Erreur interne" }, { status: 500 });
   }
 
   return NextResponse.json({ success: true, scored: rows.length });

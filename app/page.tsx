@@ -1,30 +1,20 @@
-"use client";
+import type { Metadata } from "next";
+import { HomeLanding } from "@/components/landing/HomeLanding";
 
-import { useState } from "react";
-import { Hero } from "@/components/landing/Hero";
-import { LeadGen } from "@/components/landing/LeadGen";
-import { Solution } from "@/components/landing/Solution";
-import { Problem } from "@/components/landing/Problem";
-import { Beta } from "@/components/landing/Beta";
-import { FAQ } from "@/components/landing/FAQ";
-import { Footer } from "@/components/landing/Footer";
+export const metadata: Metadata = {
+  title: "MonBaito — L'IA qui trouve ton job étudiant",
+  description:
+    "MonBaito est l'agent IA qui scanne les offres d'emploi étudiantes et t'aide à postuler plus vite et mieux. Jobs étudiants, alternances, stages vérifiés. Gratuit.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: "MonBaito — L'IA qui trouve ton job étudiant",
+    description:
+      "Fini les heures perdues. MonBaito scanne les offres, vérifie les entreprises, et t'aide à postuler en un clic.",
+    url: "/",
+    type: "website",
+  },
+};
 
 export default function Home() {
-  const [waitlistCount, setWaitlistCount] = useState<number | undefined>(
-    undefined
-  );
-
-  return (
-    <>
-      <main id="main-content">
-        <Hero onWaitlistSuccess={(count) => setWaitlistCount(count)} />
-        <LeadGen onSuccess={(count) => setWaitlistCount(count)} />
-        <Solution />
-        <Problem />
-        <Beta externalCount={waitlistCount} />
-        <FAQ />
-      </main>
-      <Footer />
-    </>
-  );
+  return <HomeLanding />;
 }

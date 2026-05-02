@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, MapPin, Briefcase } from "lucide-react";
 import { VILLES } from "@/lib/villes";
 
@@ -20,6 +20,10 @@ export function SearchBar({
   const [q, setQ] = useState(defaultQ);
   const [ville, setVille] = useState(defaultVille);
   const [type, setType] = useState(defaultType);
+
+  useEffect(() => { setQ(defaultQ); }, [defaultQ]);
+  useEffect(() => { setVille(defaultVille); }, [defaultVille]);
+  useEffect(() => { setType(defaultType); }, [defaultType]);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

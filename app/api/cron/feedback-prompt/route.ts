@@ -2,6 +2,15 @@ import { NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase-server";
 import { getResend, FROM_EMAIL } from "@/lib/resend";
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 export async function GET(request: Request) {
   const auth = request.headers.get("Authorization");
   if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
@@ -34,19 +43,19 @@ export async function GET(request: Request) {
     const raw = (app as any).enriched_offers?.raw_offers;
     if (!profile?.email) continue;
 
-    const companyName = raw?.company_name ?? "l'entreprise";
-    const jobTitle = raw?.title ?? "ce poste";
-    const firstName = profile.first_name ?? "toi";
-
-    const feedbackBase = `${siteUrl}/api/feedback/submit`;
+    const sanitize = (s: string) => s.replace(/[\r\n]/g, " ").slice(0, 200);
+    const companyName = escapeHtml(sanitize(raw?.company_name ?? "l'entreprise"));
+    const jobTitle = escapeHtml(sanitize(raw?.title ?? "ce poste"));
+    const firstName = escapeHtml(sanitize(profile.first_name ?? "toi"));
+    const subjectCompany = sanitize(raw?.company_name ?? "l'entreprise");
 
     await resend.emails.send({
       from: FROM_EMAIL,
       to: profile.email,
-      subject: `Ça a donné quoi chez ${companyName} ? 🎯`,
+      subject: `Ça a donné quoi chez ${subjectCompany} ?`,
       html: `
         <div style="font-family:sans-serif;max-width:500px;margin:0 auto;color:#111">
-          <h2>Hey ${firstName} 👋</h2>
+          <h2>Hey ${firstName}</h2>
           <p>Tu as postulé pour <strong>${jobTitle}</strong> chez <strong>${companyName}</strong> il y a 2 jours.</p>
           <p>C'était comment ? Aide les autres étudiants MonBaito avec ton retour (anonyme) :</p>
           <div style="margin:24px 0;display:flex;gap:12px;flex-direction:column">

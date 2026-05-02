@@ -32,7 +32,7 @@ interface OfferInput {
 async function checkSirene(
   companyName: string | null | undefined
 ): Promise<{ points: number; reason: TrustReason; sireneData: Record<string, unknown> | null; verified: boolean }> {
-  if (!companyName || !process.env.INSEE_API_KEY) {
+  if (!companyName || companyName.trim().length === 0 || !process.env.INSEE_API_KEY) {
     return {
       points: 0,
       reason: { type: "company", severity: "neutral", message: "Entreprise non vérifiée (SIRENE non configuré)", points: 0 },
@@ -56,8 +56,9 @@ async function checkSirene(
     if (!tokenRes.ok) throw new Error("INSEE token failed");
     const { access_token } = await tokenRes.json();
 
+    const safeName = companyName.slice(0, 150).replace(/["\\]/g, "");
     const searchRes = await fetch(
-      `https://api.insee.fr/entreprises/sirene/V3.11/siren?q=denominationUniteLegale:"${encodeURIComponent(companyName)}"&nombre=1`,
+      `https://api.insee.fr/entreprises/sirene/V3.11/siren?q=denominationUniteLegale:"${encodeURIComponent(safeName)}"&nombre=1`,
       { headers: { Authorization: `Bearer ${access_token}`, Accept: "application/json" } }
     );
     if (!searchRes.ok) throw new Error("SIRENE search failed");
@@ -161,7 +162,12 @@ export async function computeTrustScore(offer: OfferInput): Promise<TrustScoreRe
   // Étape 3 : Détection arnaque Claude Haiku
   let isScamLikely = false;
   if (offer.description) {
-    const scam = await detectScam(offer.description);
+    let scam = { scam_risk: 0, patterns_detected: [] as string[], reasoning: "Analyse indisponible" };
+    try {
+      scam = await detectScam(offer.description);
+    } catch {
+      // Anthropic API indisponible ou clé manquante — on continue sans
+    }
     isScamLikely = scam.scam_risk > 50;
     const scamPoints = scam.scam_risk < 20 ? 50 : scam.scam_risk <= 50 ? 0 : -50;
     const scamReason: TrustReason = {

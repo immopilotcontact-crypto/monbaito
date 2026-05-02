@@ -43,10 +43,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const userAgent = request.headers.get("user-agent") || null;
-    const utmSource = body.utm_source || null;
-    const utmMedium = body.utm_medium || null;
-    const utmCampaign = body.utm_campaign || null;
+    const userAgent = (request.headers.get("user-agent") || "").slice(0, 512) || null;
+    const utmSource = typeof body.utm_source === "string" ? body.utm_source.slice(0, 100) : null;
+    const utmMedium = typeof body.utm_medium === "string" ? body.utm_medium.slice(0, 100) : null;
+    const utmCampaign = typeof body.utm_campaign === "string" ? body.utm_campaign.slice(0, 100) : null;
 
     const supabase = createServiceClient();
 

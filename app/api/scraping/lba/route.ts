@@ -1,26 +1,43 @@
 export const runtime = "nodejs";
-export const maxDuration = 60;
+export const maxDuration = 90;
 
 import { NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase-server";
 import sanitizeHtml from "sanitize-html";
 
 const CITIES = [
-  { lat: 48.8566, lng: 2.3522 },
-  { lat: 45.764,  lng: 4.8357 },
-  { lat: 43.2965, lng: 5.3698 },
-  { lat: 43.6047, lng: 1.4442 },
-  { lat: 44.8378, lng: -0.5792 },
-  { lat: 47.2184, lng: -1.5536 },
-  { lat: 50.6292, lng: 3.0573 },
-  { lat: 48.5734, lng: 7.7521 },
+  { lat: 48.8566, lng: 2.3522 },   // Paris
+  { lat: 45.764,  lng: 4.8357 },   // Lyon
+  { lat: 43.2965, lng: 5.3698 },   // Marseille
+  { lat: 43.6047, lng: 1.4442 },   // Toulouse
+  { lat: 44.8378, lng: -0.5792 },  // Bordeaux
+  { lat: 47.2184, lng: -1.5536 },  // Nantes
+  { lat: 50.6292, lng: 3.0573 },   // Lille
+  { lat: 48.5734, lng: 7.7521 },   // Strasbourg
+  { lat: 43.7102, lng: 7.2620 },   // Nice
+  { lat: 48.1173, lng: -1.6778 },  // Rennes
+  { lat: 43.6108, lng: 3.8767 },   // Montpellier
+  { lat: 45.1885, lng: 5.7245 },   // Grenoble
+  { lat: 45.4397, lng: 4.3872 },   // Saint-Étienne
+  { lat: 43.1242, lng: 5.9280 },   // Toulon
+  { lat: 49.4432, lng: 1.0993 },   // Rouen
+  { lat: 47.3220, lng: 5.0415 },   // Dijon
+  { lat: 49.2583, lng: 4.0317 },   // Reims
+  { lat: 45.7797, lng: 3.0863 },   // Clermont-Ferrand
+  { lat: 47.4784, lng: -0.5632 },  // Angers
+  { lat: 48.6921, lng: 6.1844 },   // Nancy
+  { lat: 49.1829, lng: -0.3707 },  // Caen
+  { lat: 43.5297, lng: 5.4474 },   // Aix-en-Provence
+  { lat: 48.3904, lng: -4.4861 },  // Brest
+  { lat: 49.1193, lng: 6.1757 },   // Metz
 ];
 
 const ROMES = "G1803,D1506,N4105,K1302,D1507,M1607,K2112,G1802,N4101";
 
 function parseAddress(address: string | undefined): { city: string | null; postal: string | null } {
   if (!address) return { city: null, postal: null };
-  const match = address.match(/(\d{5})\s+([A-Z\s-]+)$/);
+  // Matches "75001 Paris", "75001 PARIS", "13001 Marseille", etc.
+  const match = address.match(/(\d{5})\s+(.+)$/);
   if (match) return { city: match[2].trim(), postal: match[1] };
   return { city: null, postal: null };
 }
@@ -108,10 +125,26 @@ export async function GET(request: Request) {
     const supabase = createServiceClient();
     for (let i = 0; i < rows.length; i += 50) {
       const batch = rows.slice(i, i + 50);
-      const { error } = await supabase
+      const { data: upserted, error } = await supabase
         .from("raw_offers")
-        .upsert(batch, { onConflict: "source,source_id" });
-      if (!error) inserted += batch.length;
+        .upsert(batch, { onConflict: "source,source_id" })
+        .select("id, contract_type");
+      if (!error && upserted) {
+        inserted += upserted.length;
+        const enrichedRows = upserted.map((r) => ({
+          raw_offer_id: r.id,
+          trust_score: 50,
+          trust_reasons: ["Offre importée — scoring IA en attente"],
+          company_verified: false,
+          sirene_data: null,
+          description_embedding: null,
+          is_scam_likely: false,
+          contract_type_clean: r.contract_type,
+        }));
+        await supabase
+          .from("enriched_offers")
+          .upsert(enrichedRows, { onConflict: "raw_offer_id", ignoreDuplicates: true });
+      }
     }
 
     return NextResponse.json({ success: true, inserted });
