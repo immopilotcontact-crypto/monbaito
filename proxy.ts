@@ -2,14 +2,20 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const PROTECTED_PATHS = ["/dashboard", "/onboarding", "/offre/", "/candidatures", "/entreprise", "/profil", "/settings"];
+const PROTECTED_PATHS = [
+  "/dashboard",
+  "/profil",
+  "/candidatures",
+  "/onboarding",
+  "/entreprise",
+  "/offre",
+  "/settings",
+];
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  let response = NextResponse.next({
-    request: { headers: request.headers },
-  });
+  let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -20,11 +26,10 @@ export async function proxy(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
-          response = NextResponse.next({ request: { headers: request.headers } });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options)
-          );
+          cookiesToSet.forEach(({ name, value, options }) => {
+            request.cookies.set(name, value);
+            response.cookies.set(name, value, options);
+          });
         },
       },
     }
@@ -34,14 +39,17 @@ export async function proxy(request: NextRequest) {
 
   const isProtected = PROTECTED_PATHS.some((p) => pathname.startsWith(p));
   if (isProtected && !session) {
-    const loginUrl = new URL("/auth/login", request.url);
-    loginUrl.searchParams.set("redirectTo", pathname);
+    const loginUrl = request.nextUrl.clone();
+    loginUrl.pathname = "/auth/login";
+    loginUrl.searchParams.set("next", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  // Already logged in and visiting login page → redirect to dashboard
-  if (pathname === "/auth/login" && session) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+  if (session && (pathname.startsWith("/auth/login") || pathname.startsWith("/auth/register"))) {
+    const dashboardUrl = request.nextUrl.clone();
+    dashboardUrl.pathname = "/dashboard";
+    dashboardUrl.search = "";
+    return NextResponse.redirect(dashboardUrl);
   }
 
   return response;
@@ -49,6 +57,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|icon-|apple-touch|og-image|manifest|robots|sitemap|api/cron|api/stripe/webhook).*)",
+    "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|woff2?)$).*)",
   ],
 };
