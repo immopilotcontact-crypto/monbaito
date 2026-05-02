@@ -4,6 +4,32 @@ import type { EnrichedOfferWithRaw } from "@/types/database";
 import { TrustBadge } from "./TrustBadge";
 import { PostulerButton } from "./PostulerButton";
 
+const AVATAR_COLORS = [
+  "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
+  "bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300",
+  "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300",
+  "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300",
+  "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300",
+  "bg-cyan-100 text-cyan-700 dark:bg-cyan-900/40 dark:text-cyan-300",
+  "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300",
+  "bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300",
+  "bg-teal-100 text-teal-700 dark:bg-teal-900/40 dark:text-teal-300",
+  "bg-pink-100 text-pink-700 dark:bg-pink-900/40 dark:text-pink-300",
+];
+
+function CompanyAvatar({ name }: { name: string | null }) {
+  const initials = name
+    ? name.trim().split(/\s+/).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? "").join("")
+    : "?";
+  const hash = name ? [...name].reduce((acc, c) => acc + c.charCodeAt(0), 0) : 0;
+  const colorClass = AVATAR_COLORS[hash % AVATAR_COLORS.length];
+  return (
+    <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 font-black text-sm ${colorClass}`}>
+      {initials}
+    </div>
+  );
+}
+
 interface OfferCardProps {
   offer: EnrichedOfferWithRaw;
 }
@@ -54,8 +80,9 @@ export function OfferCard({ offer }: OfferCardProps) {
   return (
     <article className="bg-card border border-border/50 rounded-xl p-5 hover:-translate-y-px hover:shadow-lg transition-all duration-150 flex flex-col gap-3">
       {/* Header */}
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
+      <div className="flex items-start gap-3">
+        <CompanyAvatar name={raw.company_name} />
+        <div className="min-w-0 flex-1">
           <h2 className="font-bold text-base text-foreground line-clamp-2 leading-snug">
             {raw.title}
           </h2>
